@@ -85,6 +85,7 @@ public class AuthService
 
         return "token:" + jwtUtil.generateToken(
                 admin.getEmail(),
+                admin.getName(),
                 admin.getAdminId(),   // id second
                 "ADMIN"               // role third
         );
