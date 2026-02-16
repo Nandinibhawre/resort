@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 @Data
 public class BookingRequest {
-
+    // Make tutorial
     private String roomId;
     private String userId;
 
