@@ -19,6 +19,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setSubject(email)
+                .claim("name",name)
                 .claim("id", userId)
                 .claim("role", role)
                 .setIssuedAt(new Date())
