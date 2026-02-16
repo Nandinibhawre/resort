@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,34 +24,36 @@ public class BookingService {
     private final UserRepo userRepository;
     private final EmailService emailService;
 
-    public Booking createBooking(String userId, BookingRequest request) {
+    public Booking createBooking(String userId, String roomId, BookingRequest request) {
 
-        // ❌ Room ID missing
-        if (request.getRoomId() == null) {
-            throw new BadRequestException("Room ID is required");
-        }
+        // ✅ Find room by path id
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Room not found"));
 
-        // ❌ Room not found
-        Room room = roomRepository.findById(request.getRoomId())
-                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
-
-        // ❌ Room unavailable
-        if (!room.isAvailable()) {
-            throw new BadRequestException("Room is not available for booking");
-        }
-
-        // ❌ User not found
+        // ✅ Find user from token id
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // ❌ Invalid dates
+        // ✅ Check overlapping bookings
+        List<Booking> conflicts =
+                bookingRepository.findConflictingBookings(
+                        roomId,
+                        request.getCheckInDate(),
+                        request.getCheckOutDate()
+                );
+
+        if (!conflicts.isEmpty()) {
+            throw new RuntimeException("Room already booked for selected dates");
+        }
+
+        // ✅ Calculate days
         long days = ChronoUnit.DAYS.between(
                 request.getCheckInDate(),
                 request.getCheckOutDate()
         );
 
         if (days <= 0) {
-            throw new BadRequestException("Check-out date must be after check-in date");
+            throw new RuntimeException("Check-out must be after check-in");
         }
 
         double total = days * room.getPricePerNight();
@@ -66,11 +69,10 @@ public class BookingService {
 
         bookingRepository.save(booking);
 
-        // ✅ Mark room unavailable
-        room.setAvailable(false);
-        roomRepository.save(room);
+        // ❌ DO NOT mark room unavailable anymore
+        // because availability is now date-based
 
-        // ✅ Send confirmation email
+        // ✅ Send email
         emailService.sendBookingConfirmationEmail(
                 user.getEmail(),
                 user.getName(),
@@ -80,24 +82,5 @@ public class BookingService {
         );
 
         return booking;
-    }
-
-    public void cancelBooking(String id) {
-
-        // ❌ Booking not found
-        Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
-
-        booking.setStatus("CANCELLED");
-        bookingRepository.save(booking);
-
-        // ✅ Make room available again
-        Room room = roomRepository.findById(booking.getRoomId())
-                .orElse(null);
-
-        if (room != null) {
-            room.setAvailable(true);
-            roomRepository.save(room);
-        }
     }
 }
