@@ -36,8 +36,8 @@ public class SecurityConfig
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/rooms/**",
-                                "/api/contact/**"
-
+                                "/api/contact/**",
+                                "/api/profile/**"
                         ).permitAll()
 
                         // 🔒 ADMIN APIs
