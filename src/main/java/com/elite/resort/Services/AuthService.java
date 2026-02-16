@@ -60,6 +60,7 @@ public class AuthService
 
         String token = jwtUtil.generateToken(
                 user.getEmail(),
+                user.getName(),
                 user.getUserId(),
                 role
 
