@@ -3,6 +3,7 @@ package com.elite.resort.Services;
 import com.elite.resort.DTO.BookingRequest;
 import com.elite.resort.Exceptions.BadRequestException;
 import com.elite.resort.Exceptions.ResourceNotFoundException;
+import com.elite.resort.Exceptions.RoomUnavailableException;
 import com.elite.resort.Model.Booking;
 import com.elite.resort.Model.Room;
 import com.elite.resort.Model.User;
@@ -32,6 +33,11 @@ public class BookingService {
         // ✅ Find user from token id
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // ✅ 1. Check room active status
+        if (!room.isAvailable()) {
+            throw new RoomUnavailableException("Room is currently unavailable for booking");
+        }
 
         // ✅ Check overlapping bookings
         List<Booking> conflicts =
