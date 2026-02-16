@@ -7,6 +7,7 @@ import java.time.LocalDate;
 @Data
 public class BookingRequest {
 
+    // This is DTo
     private String roomId;
     private String userId;
 
