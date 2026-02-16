@@ -80,10 +80,24 @@ public class AuthService
             throw new RuntimeException("Invalid password");
         }
 
-        return jwtUtil.generateToken(
+        return "token:" + jwtUtil.generateToken(
                 admin.getEmail(),
                 admin.getAdminId(),   // id second
                 "ADMIN"               // role third
         );
+//        String role = "ADMIN";
+//
+//        String token = jwtUtil.generateToken(
+//                admin.getEmail(),
+//                admin.getAdminId(),
+//                role
+//
+//        );
+//
+//        return new LoginResponse(
+//                token,
+//                admin.getEmail(),
+//                role
+//        );
     }
 }
