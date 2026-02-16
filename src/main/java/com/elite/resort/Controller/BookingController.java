@@ -16,19 +16,22 @@ public class BookingController {
     private final JwtUtil jwtUtil;
 
     // ================= CREATE BOOKING =================
-    @PostMapping
-    public Booking bookRoom(
-            @RequestHeader("Authorization") String authHeader,
-            @RequestBody BookingRequest request) {
+@PostMapping("/rooms/{roomId}")
+public Booking bookRoom(
+        @PathVariable String roomId,
+        @RequestHeader("Authorization") String authHeader,
+        @RequestBody BookingRequest request) {
 
-        // ✅ REMOVE "Bearer "
-        String token = authHeader.substring(7);
+    // ✅ Remove Bearer prefix
+    String token = authHeader.substring(7);
 
-        // ✅ EXTRACT USER ID FROM TOKEN
-        String userId = jwtUtil.extractId(token);
+    // ✅ Extract userId from JWT
+    String userId = jwtUtil.extractId(token);
 
-        return bookingService.createBooking(userId, request);
-    }
+  
+    return bookingService.createBooking(userId, roomId, request);
+}
+
 
     // ================= CANCEL BOOKING =================
     @PutMapping("/{id}/cancel")

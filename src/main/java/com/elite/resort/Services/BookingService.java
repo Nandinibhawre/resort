@@ -23,7 +23,6 @@ public class BookingService {
     private final RoomRepo roomRepository;
     private final UserRepo userRepository;
     private final EmailService emailService;
-
     public Booking createBooking(String userId, String roomId, BookingRequest request) {
 
         // ✅ Find room by path id
@@ -82,5 +81,25 @@ public class BookingService {
         );
 
         return booking;
+    }
+
+
+    public void cancelBooking(String id) {
+
+        // ❌ Booking not found
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        booking.setStatus("CANCELLED");
+        bookingRepository.save(booking);
+
+        // ✅ Make room available again
+        Room room = roomRepository.findById(booking.getRoomId())
+                .orElse(null);
+
+        if (room != null) {
+            room.setAvailable(true);
+            roomRepository.save(room);
+        }
     }
 }
