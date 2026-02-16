@@ -68,6 +68,7 @@ public class AuthService
         return new LoginResponse(
                 token,
                 user.getEmail(),
+                user.getName(),
                 role
         );
     }
@@ -85,19 +86,5 @@ public class AuthService
                 admin.getAdminId(),   // id second
                 "ADMIN"               // role third
         );
-//        String role = "ADMIN";
-//
-//        String token = jwtUtil.generateToken(
-//                admin.getEmail(),
-//                admin.getAdminId(),
-//                role
-//
-//        );
-//
-//        return new LoginResponse(
-//                token,
-//                admin.getEmail(),
-//                role
-//        );
     }
 }
