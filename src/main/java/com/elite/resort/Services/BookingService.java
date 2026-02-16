@@ -1,6 +1,8 @@
 package com.elite.resort.Services;
 
 import com.elite.resort.DTO.BookingRequest;
+import com.elite.resort.Exceptions.BadRequestException;
+import com.elite.resort.Exceptions.ResourceNotFoundException;
 import com.elite.resort.Model.Booking;
 import com.elite.resort.Model.Room;
 import com.elite.resort.Model.User;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
+
 @Service
 @RequiredArgsConstructor
 public class BookingService {
@@ -22,45 +25,52 @@ public class BookingService {
 
     public Booking createBooking(String userId, BookingRequest request) {
 
-        if (request.getRoomId() == null)
-            throw new RuntimeException("RoomId missing");
+        // ❌ Room ID missing
+        if (request.getRoomId() == null) {
+            throw new BadRequestException("Room ID is required");
+        }
 
-        // ✅ GET ROOM FROM DB
+        // ❌ Room not found
         Room room = roomRepository.findById(request.getRoomId())
-                .orElseThrow(() -> new RuntimeException("Room not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
 
-        if (!room.isAvailable())
-            throw new RuntimeException("Room not available");
+        // ❌ Room unavailable
+        if (!room.isAvailable()) {
+            throw new BadRequestException("Room is not available for booking");
+        }
 
-        // ✅ GET USER FROM DB
+        // ❌ User not found
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // ✅ CALCULATE DAYS
+        // ❌ Invalid dates
         long days = ChronoUnit.DAYS.between(
                 request.getCheckInDate(),
-                request.getCheckOutDate());
+                request.getCheckOutDate()
+        );
 
-        if (days <= 0)
-            throw new RuntimeException("Invalid booking dates");
+        if (days <= 0) {
+            throw new BadRequestException("Check-out date must be after check-in date");
+        }
 
         double total = days * room.getPricePerNight();
 
-        // ✅ CREATE BOOKING
+        // ✅ Create booking
         Booking booking = new Booking();
-        booking.setRoomId(room.getRoomId());     // FIXED
-        booking.setUserId(user.getUserId());     // FIXED
+        booking.setRoomId(room.getRoomId());
+        booking.setUserId(user.getUserId());
         booking.setCheckIn(request.getCheckInDate());
         booking.setCheckOut(request.getCheckOutDate());
         booking.setTotalAmount(total);
         booking.setStatus("CONFIRMED");
+
         bookingRepository.save(booking);
 
-        // ✅ MARK ROOM UNAVAILABLE
+        // ✅ Mark room unavailable
         room.setAvailable(false);
         roomRepository.save(room);
 
-        // ✅ EMAIL
+        // ✅ Send confirmation email
         emailService.sendBookingConfirmationEmail(
                 user.getEmail(),
                 user.getName(),
@@ -71,15 +81,17 @@ public class BookingService {
 
         return booking;
     }
+
     public void cancelBooking(String id) {
 
+        // ❌ Booking not found
         Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
         booking.setStatus("CANCELLED");
         bookingRepository.save(booking);
 
-        // ✅ OPTIONAL: make room available again
+        // ✅ Make room available again
         Room room = roomRepository.findById(booking.getRoomId())
                 .orElse(null);
 
