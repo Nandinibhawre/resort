@@ -6,11 +6,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "admins")
 @Data
-public class Admin {
-
+public class Admin
+{
     @Id
     private String adminId;
-
     private String name;
     private String email;
     private String password;

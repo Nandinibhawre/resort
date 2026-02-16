@@ -21,19 +21,21 @@ public class AuthController
     private final AuthService authService;
 
     @PostMapping("/user/signup")
-    public String userSignup(@RequestBody UserRegisterRequest request) {
+    public String userSignup(@RequestBody UserRegisterRequest request)
+    {
         return authService.registerUser(request);
     }
 
-
     @PostMapping("/user/login")
     public LoginResponse
-    login(@RequestBody LoginRequest request) {
+    login(@RequestBody LoginRequest request)
+    {
         return authService.userLogin(request);
     }
 
     @PostMapping("/admin/login")
-    public String adminLogin(@RequestBody LoginRequest request) {
+    public String adminLogin(@RequestBody LoginRequest request)
+    {
         return authService.adminLogin(request);
     }
 }

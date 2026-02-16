@@ -21,6 +21,8 @@ public class AuthService
     private final AdminRepo adminRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private  final EmailService emailService;
+
 
     // USER REGISTER
     public String registerUser(UserRegisterRequest request) {
@@ -36,6 +38,12 @@ public class AuthService
 
         userRepository.save(user);
 
+
+        // ✅ SEND EMAIL AFTER REGISTER
+        emailService.sendAccountCreatedEmail(
+                user.getEmail(),
+                user.getName()
+        );
         return "User Registered Successfully";
     }
 
@@ -52,8 +60,9 @@ public class AuthService
 
         String token = jwtUtil.generateToken(
                 user.getEmail(),
-                role,
-                user.getUserId()
+                user.getUserId(),
+                role
+
         );
 
         return new LoginResponse(
@@ -73,8 +82,8 @@ public class AuthService
 
         return jwtUtil.generateToken(
                 admin.getEmail(),
-                "ADMIN",
-                admin.getAdminId()
+                admin.getAdminId(),   // id second
+                "ADMIN"               // role third
         );
     }
 }

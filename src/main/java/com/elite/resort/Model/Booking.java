@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class Booking {
 
     @Id
-    private String id;
+    private String BookingId;
 
     private String userId;   // Only USER can book
     private String roomId;

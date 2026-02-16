@@ -16,7 +16,8 @@ public class ContactController {
     private final ContactRepo contactRepository;
 
     @PostMapping
-    public String sendMessage(@RequestBody Contact contact) {
+    public String sendMessage(@RequestBody Contact contact)
+    {
         contactRepository.save(contact);
         return "Message submitted successfully";
     }

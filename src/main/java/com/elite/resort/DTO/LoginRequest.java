@@ -3,7 +3,8 @@ package com.elite.resort.DTO;
 import lombok.Data;
 
     @Data
-    public class LoginRequest {
+    public class LoginRequest
+    {
         private String email;
         private String password;
     }
