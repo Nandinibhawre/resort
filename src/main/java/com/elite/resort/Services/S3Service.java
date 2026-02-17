@@ -35,7 +35,7 @@ public class S3Service {
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
         // 👉 create key with folder
-        String key = folderName + "/" + fileName;
+        String key = "Resort/RoomImages";
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
