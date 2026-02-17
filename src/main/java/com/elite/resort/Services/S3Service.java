@@ -1,9 +1,7 @@
 package com.elite.resort.Services;
 
-
 import com.elite.resort.Model.Image;
 import com.elite.resort.Repository.ImageRepo;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,15 +17,12 @@ import java.util.UUID;
 public class S3Service {
 
     @Autowired
-    private final S3Client s3Client;
+    private S3Client s3Client;
     @Autowired
-    private final ImageRepo imageRepository;
+    private ImageRepo imageRepository;
 
-    @Value("${aws.bucketName}")
+    @Value("${aws.bucket-name}")
     private String bucketName;
-
-    @Value("${aws.folderName}")
-    private String folderName;
 
     public S3Service(S3Client s3Client, ImageRepo imageRepository) {
         this.s3Client = s3Client;
@@ -49,8 +44,7 @@ public class S3Service {
 
         s3Client.putObject(
                 putObjectRequest,
-                RequestBody.fromBytes(file.getBytes())
-        );
+                RequestBody.fromBytes(file.getBytes()));
 
         String imageUrl = "https://" + bucketName + ".s3.amazonaws.com/" + key;
 

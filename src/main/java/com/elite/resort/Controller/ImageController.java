@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/images")
+@RequestMapping("/api/images/")
 public class ImageController {
 
     @Autowired
-    private final S3Service s3Service;
+    private S3Service s3Service;
 
     public ImageController(S3Service s3Service) {
         this.s3Service = s3Service;
