@@ -36,7 +36,7 @@ public class PaymentService {
 
         // 3️⃣ Create payment
         Payment payment = new Payment();
-        payment.setBookingId(booking.getBookingId());
+        payment.setBookingId(bookingId);
         payment.setMethod(method);
         payment.setTransactionId(transactionId);
         payment.setAmount(booking.getTotalAmount());
