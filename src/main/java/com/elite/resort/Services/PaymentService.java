@@ -30,7 +30,7 @@ public class PaymentService {
         Booking booking = bookingRepo.findById(request.getBookingId())
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        // 2️⃣ Booking must be PENDING
+        // 2️⃣ Booking must be
         if (!"PENDING".equals(booking.getStatus())) {
             throw new RuntimeException("Payment already completed or booking cancelled");
         }
