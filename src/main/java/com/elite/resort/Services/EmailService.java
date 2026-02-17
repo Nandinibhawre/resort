@@ -67,7 +67,27 @@ public class EmailService {
 
         sendEmail(toEmail, "Booking Confirmed - Elite Resort", html);
     }
+    // ================= BOOKING CONFIRMATION AFTER PAYMENT =================
+    public void sendPaymentSuccessEmail(
+            String userEmail,
+            String roomId,
+            LocalDate checkIn,
+            LocalDate checkOut,
+            double amount
+    ) {
 
+        String htmlContent =
+                "<h2>Payment Successful ✅</h2>" +
+                        "<p>Your booking is now <b>CONFIRMED</b>.</p>" +
+                        "<ul>" +
+                        "<li><b>Room ID:</b> " + roomId + "</li>" +
+                        "<li><b>Check-in:</b> " + checkIn + "</li>" +
+                        "<li><b>Check-out:</b> " + checkOut + "</li>" +
+                        "<li><b>Total Paid:</b> ₹" + amount + "</li>" +
+                        "</ul>";
+       
+        sendEmail(userEmail, "Booking Confirmed – Payment Successful", htmlContent);
+    }
     // =====================================================
     // ✅ COMMON EMAIL METHOD (BREVO API)
     // =====================================================
@@ -91,43 +111,5 @@ public class EmailService {
                 .bodyToMono(String.class)
                 .block();
     }
-    // ================= BOOKING CONFIRMATION AFTER PAYMENT =================
-    public void sendPaymentSuccessEmail(
-            String userEmail,
-            String roomId,
-            LocalDate checkIn,
-            LocalDate checkOut,
-            double amount
-    ) {
 
-        String htmlContent =
-                "<h2>Payment Successful ✅</h2>" +
-                        "<p>Your booking is now <b>CONFIRMED</b>.</p>" +
-                        "<ul>" +
-                        "<li><b>Room ID:</b> " + roomId + "</li>" +
-                        "<li><b>Check-in:</b> " + checkIn + "</li>" +
-                        "<li><b>Check-out:</b> " + checkOut + "</li>" +
-                        "<li><b>Total Paid:</b> ₹" + amount + "</li>" +
-                        "</ul>";
-
-        Map<String, Object> body = Map.of(
-                "sender", Map.of(
-                        "email", senderEmail,
-                        "name", senderName
-                ),
-                "to", java.util.List.of(   // ✅ IMPORTANT FIX
-                        Map.of("email", userEmail)
-                ),
-                "subject", "Booking Confirmed – Payment Successful",
-                "htmlContent", htmlContent
-        );
-
-        webClient.post()
-                .uri("/smtp/email")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(body)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }
 }
