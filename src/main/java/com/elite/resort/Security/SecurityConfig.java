@@ -40,13 +40,10 @@ public class SecurityConfig
                                 "/api/profile/**"
                         ).permitAll()
 
-                        // 🔒 ADMIN APIs
-                        .requestMatchers("/api/admin/**")
-                        .hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/images/**").hasRole("ADMIN")
 
-                        // 🔐 Everything else needs authentication
-                        .anyRequest()
-                        .authenticated()
+                        .anyRequest().authenticated()
                 )
 
                 .addFilterBefore(
