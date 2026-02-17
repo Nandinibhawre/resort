@@ -85,7 +85,7 @@ public class EmailService {
                         "<li><b>Check-out:</b> " + checkOut + "</li>" +
                         "<li><b>Total Paid:</b> ₹" + amount + "</li>" +
                         "</ul>";
-       
+
         sendEmail(userEmail, "Booking Confirmed – Payment Successful", htmlContent);
     }
     // =====================================================
@@ -93,23 +93,30 @@ public class EmailService {
     // =====================================================
     private void sendEmail(String toEmail, String subject, String htmlContent) {
 
+        Map<String, Object> body = Map.of(
+                "sender", Map.of(
+                        "email", senderEmail,
+                        "name", senderName
+                ),
+                "to", java.util.List.of(
+                        Map.of("email", toEmail)
+                ),
+                "subject", subject,
+                "htmlContent", htmlContent
+        );
+
         webClient.post()
                 .uri("/smtp/email")
                 .header("api-key", apiKey)
-                .bodyValue(Map.of(
-                        "sender", Map.of(
-                                "email", senderEmail,
-                                "name", senderName
-                        ),
-                        "to", new Object[]{
-                                Map.of("email", toEmail)
-                        },
-                        "subject", subject,
-                        "htmlContent", htmlContent
-                ))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(body)
                 .retrieve()
+                .onStatus(
+                        status -> status.isError(),
+                        response -> response.bodyToMono(String.class)
+                                .map(msg -> new RuntimeException("BREVO REAL ERROR → " + msg))
+                )
                 .bodyToMono(String.class)
                 .block();
     }
-
 }
