@@ -1,6 +1,7 @@
 package com.elite.resort.Controller;
 
 import com.elite.resort.Services.S3Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/images")
 public class ImageController {
 
+    @Autowired
     private final S3Service s3Service;
 
     public ImageController(S3Service s3Service) {

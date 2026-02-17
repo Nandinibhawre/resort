@@ -3,6 +3,8 @@ package com.elite.resort.Services;
 
 import com.elite.resort.Model.Image;
 import com.elite.resort.Repository.ImageRepo;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +18,9 @@ import java.util.UUID;
 @Service
 public class S3Service {
 
+    @Autowired
     private final S3Client s3Client;
+    @Autowired
     private final ImageRepo imageRepository;
 
     @Value("${aws.bucketName}")
