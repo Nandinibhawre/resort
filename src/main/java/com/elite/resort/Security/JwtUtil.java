@@ -15,17 +15,15 @@ public class JwtUtil {
     private static final long EXPIRATION_TIME =
             1000 * 60 * 60 * 24;
 
-    public String generateToken(String email,String name, String userId, String role) {
+    public String generateToken(String email, String name, String userId, String role) {
 
         return Jwts.builder()
                 .setSubject(email)
-                .claim("name",name)
-                .claim("id", userId)
+                .claim("name", name)
+                .claim("userId", userId)   // ⭐ change here
                 .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(
-                        new Date(System.currentTimeMillis() + EXPIRATION_TIME)
-                )
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
@@ -41,10 +39,9 @@ public class JwtUtil {
         return extractClaims(token).getSubject();
     }
 
-    public String extractId(String token) {
-        return extractClaims(token).get("id", String.class);
+    public String extractUserId(String token) {
+        return extractClaims(token).get("userId", String.class);
     }
-
 
     public String extractName(String token) {
         return extractClaims(token).get("name", String.class);

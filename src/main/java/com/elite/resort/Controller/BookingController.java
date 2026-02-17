@@ -26,7 +26,7 @@ public Booking bookRoom(
     String token = authHeader.substring(7);
 
     // ✅ Extract userId from JWT
-    String userId = jwtUtil.extractId(token);
+    String userId = jwtUtil.extractUserId(token);
 
   
     return bookingService.createBooking(userId, roomId, request);

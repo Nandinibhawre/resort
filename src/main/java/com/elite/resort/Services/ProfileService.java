@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProfileService {
-
     @Autowired
     private ProfileRepo profileRepository;
 

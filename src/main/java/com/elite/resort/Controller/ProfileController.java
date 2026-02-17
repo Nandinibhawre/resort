@@ -31,7 +31,7 @@ public class ProfileController {
 
         String token = httpRequest.getHeader("Authorization").substring(7);
 
-        String userId = jwtUtil.extractId(token);
+        String userId = jwtUtil.extractUserId(token);
         String name = jwtUtil.extractName(token);
         String email = jwtUtil.extractEmail(token);
 
@@ -45,7 +45,7 @@ public class ProfileController {
     public ResponseEntity<Profile> getMyProfile(HttpServletRequest httpRequest) {
 
         String token = httpRequest.getHeader("Authorization").substring(7);
-        String userId = jwtUtil.extractId(token);
+        String userId = jwtUtil.extractUserId(token);
 
         return ResponseEntity.ok(profileService.getProfileByUserId(userId));
     }
