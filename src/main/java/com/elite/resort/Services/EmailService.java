@@ -126,7 +126,7 @@ public class EmailService {
 
 
         webClient.post()
-                .uri("https://api.brevo.com/v3/smtp/email")
+                .uri("https://api.brevo.com/v3")
                 .header("api-key", apiKey)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(body)
