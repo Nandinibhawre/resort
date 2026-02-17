@@ -3,8 +3,6 @@ package com.elite.resort.Services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -16,7 +14,7 @@ import java.util.Map;
 public class EmailService {
 
 
-    private final JavaMailSender mailSender;
+
 
     // 🔐 Brevo config from properties
     @Value("${brevo.api.key}")
