@@ -1,4 +1,8 @@
 package com.elite.resort.Repository;
 
-public class ImageRepo {
+
+import com.elite.resort.Model.Image;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface ImageRepo extends MongoRepository<Image, String> {
 }
