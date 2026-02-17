@@ -1,6 +1,8 @@
 package com.elite.resort.Services;
 
 
+import com.elite.resort.Model.Image;
+import com.elite.resort.Repository.ImageRepo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +17,7 @@ import java.util.UUID;
 public class S3Service {
 
     private final S3Client s3Client;
-    private final ImageRepository imageRepository;
+    private final ImageRepo imageRepository;
 
     @Value("${aws.bucketName}")
     private String bucketName;
@@ -23,7 +25,7 @@ public class S3Service {
     @Value("${aws.folderName}")
     private String folderName;
 
-    public S3Service(S3Client s3Client, ImageRepository imageRepository) {
+    public S3Service(S3Client s3Client, ImageRepo imageRepository) {
         this.s3Client = s3Client;
         this.imageRepository = imageRepository;
     }

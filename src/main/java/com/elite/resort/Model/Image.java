@@ -12,4 +12,10 @@ public class Image {
     private String id;
     private String fileName;
     private String imageUrl;
+
+    public Image(String fileName,String imageUrl)
+    {
+        this.fileName=fileName;
+        this.imageUrl=imageUrl;
+    }
 }
