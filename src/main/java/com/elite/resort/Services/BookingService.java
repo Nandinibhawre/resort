@@ -70,7 +70,7 @@ public class BookingService {
         booking.setCheckIn(request.getCheckInDate());
         booking.setCheckOut(request.getCheckOutDate());
         booking.setTotalAmount(total);
-        booking.setStatus("CONFIRMED");
+        booking.setStatus("PENDING_PAYMENT");
 
         bookingRepository.save(booking);
 
