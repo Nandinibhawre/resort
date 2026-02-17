@@ -69,7 +69,7 @@ public class EmailService {
     }
     // ================= BOOKING CONFIRMATION AFTER PAYMENT =================
     public void sendPaymentSuccessEmail(
-            String userEmail,
+            String toEmail,
             String roomId,
             LocalDate checkIn,
             LocalDate checkOut,
@@ -88,9 +88,9 @@ public class EmailService {
                         "<li><b>Check-out:</b> " + checkOut + "</li>" +
                         "<li><b>Total Paid:</b> ₹" + amount + "</li>" +
                         "</ul>";
+        System.out.println("Sending email to: " + toEmail);
+        sendEmail(toEmail, "Booking Confirmed – Payment Successful", htmlContent);
 
-        sendEmail(userEmail, "Booking Confirmed – Payment Successful", htmlContent);
-        System.out.println("Sending email to: " + userEmail);
     }
     // =====================================================
     // ✅ COMMON EMAIL METHOD (BREVO API)
