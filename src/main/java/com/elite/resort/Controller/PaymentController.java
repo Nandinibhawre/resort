@@ -17,19 +17,16 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
-@   Autowired
-    private BookingService bookingService;
-    @Autowired
-private JwtUtil jwtUtil;
-    @PostMapping("/rooms/{roomId}")
-    public Booking bookRoom(
-            @PathVariable String roomId,
-            @RequestHeader("Authorization") String authHeader,
-            @RequestBody BookingRequest request) {
 
-        String token = authHeader.substring(7);
-        String userId = jwtUtil.extractUserId(token);
+    @PostMapping("/pay")
+    public ResponseEntity<Payment> makePayment(@RequestBody PaymentRequest request) {
 
-        return bookingService.createBooking(userId, roomId, request);
+        Payment payment = paymentService.makePayment(
+                request.getBookingId(),
+                request.getMethod(),
+                request.getTransactionId()
+        );
+
+        return ResponseEntity.ok(payment);
     }
 }

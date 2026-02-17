@@ -1,6 +1,8 @@
 package com.elite.resort.Services;
 
 import com.elite.resort.DTO.PaymentRequest;
+import com.elite.resort.Exceptions.BadRequestException;
+import com.elite.resort.Exceptions.ResourceNotFoundException;
 import com.elite.resort.Model.Booking;
 import com.elite.resort.Model.Payment;
 import com.elite.resort.Model.Room;
@@ -17,46 +19,46 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
-
-    private final PaymentRepo paymentRepo;
-    private final BookingRepo bookingRepo;
-    private final UserRepo userRepo;
-    private final RoomRepo roomRepo;
+    private final PaymentRepo paymentRepository;
+    private final BookingRepo bookingRepository;
     private final EmailService emailService;
 
-    public Payment makePayment(PaymentRequest request) {
+    public Payment makePayment(String bookingId, String method, String transactionId) {
 
-        // 1️⃣ Get booking
-        Booking booking = bookingRepo.findById(request.getBookingId())
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+        // 1️⃣ Find booking
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
-        // 2️⃣ Booking must be
-        if (!"PENDING".equals(booking.getStatus())) {
-            throw new RuntimeException("Payment already completed or booking cancelled");
+        // 2️⃣ Check booking status
+        if (!"PENDING_PAYMENT".equals(booking.getStatus())) {
+            throw new BadRequestException("Payment already completed or booking invalid");
         }
 
         // 3️⃣ Create payment
         Payment payment = new Payment();
-        payment.setBookingId(booking.getBookingId());
+        payment.setBookingId(bookingId);
+        payment.setMethod(method);
+        payment.setTransactionId(transactionId);
         payment.setAmount(booking.getTotalAmount());
-        payment.setMethod(request.getMethod());
-        payment.setStatus("SUCCESS"); // assume success for now
-        payment.setTransactionId(request.getTransactionId());
+        payment.setStatus("SUCCESS");
         payment.setPaidAt(LocalDateTime.now());
 
-        Payment savedPayment = paymentRepo.save(payment);
+        paymentRepository.save(payment);
 
-        // 4️⃣ Update booking → CONFIRMED
+        // 4️⃣ Update booking status → CONFIRMED
         booking.setStatus("CONFIRMED");
-        bookingRepo.save(booking);
+        bookingRepository.save(booking);
 
-        // 5️⃣ Send confirmation email AFTER payment success
-        User user = userRepo.findById(booking.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        // 5️⃣ Send confirmation email
+        emailService.sendPaymentSuccessEmail(
+                booking.getUserId(),
+                booking.getRoomId(),
+                booking.getCheckIn(),
+                booking.getCheckOut(),
+                booking.getTotalAmount()
+        );
 
-        Room room = roomRepo.findById(booking.getRoomId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-                return savedPayment;
+        return payment;
     }
+
 }

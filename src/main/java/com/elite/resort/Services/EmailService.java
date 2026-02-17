@@ -2,6 +2,8 @@ package com.elite.resort.Services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -11,6 +13,9 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class EmailService {
+
+
+    private final JavaMailSender mailSender;
 
     // 🔐 Brevo config from properties
     @Value("${brevo.api.key}")
@@ -86,5 +91,35 @@ public class EmailService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+    }
+    // ================= BOOKING CONFIRMATION AFTER PAYMENT =================
+    public void sendPaymentSuccessEmail(
+            String userEmail,
+            String roomId,
+            LocalDate checkIn,
+            LocalDate checkOut,
+            double amount
+    ) {
+
+        String subject = "Booking Confirmed – Payment Successful";
+
+        String message = "Dear Customer,\n\n"
+                + "Your payment was successful and your booking is now CONFIRMED.\n\n"
+                + "Booking Details:\n"
+                + "Room ID: " + roomId + "\n"
+                + "Check-in Date: " + checkIn + "\n"
+                + "Check-out Date: " + checkOut + "\n"
+                + "Total Amount Paid: ₹" + amount + "\n\n"
+                + "We look forward to hosting you.\n"
+                + "Thank you for choosing our resort!\n\n"
+                + "Best Regards,\n"
+                + "Elite Resort Team";
+
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(userEmail);
+        email.setSubject(subject);
+        email.setText(message);
+
+        mailSender.send(email);
     }
 }
