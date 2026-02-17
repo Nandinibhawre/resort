@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/images/")
+@RequestMapping("/api/images")
 public class ImageController {
 
     @Autowired
