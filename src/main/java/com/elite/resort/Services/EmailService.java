@@ -2,6 +2,7 @@ package com.elite.resort.Services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -101,25 +102,38 @@ public class EmailService {
             double amount
     ) {
 
-        String subject = "Booking Confirmed – Payment Successful";
+        String htmlContent =
+                "<h2>Payment Successful ✅</h2>" +
+                        "<p>Your booking is now <b>CONFIRMED</b>.</p>" +
+                        "<h3>Booking Details:</h3>" +
+                        "<ul>" +
+                        "<li><b>Room ID:</b> " + roomId + "</li>" +
+                        "<li><b>Check-in:</b> " + checkIn + "</li>" +
+                        "<li><b>Check-out:</b> " + checkOut + "</li>" +
+                        "<li><b>Total Paid:</b> ₹" + amount + "</li>" +
+                        "</ul>" +
+                        "<p>We look forward to hosting you at <b>Elite Resort</b>.</p>";
 
-        String message = "Dear Customer,\n\n"
-                + "Your payment was successful and your booking is now CONFIRMED.\n\n"
-                + "Booking Details:\n"
-                + "Room ID: " + roomId + "\n"
-                + "Check-in Date: " + checkIn + "\n"
-                + "Check-out Date: " + checkOut + "\n"
-                + "Total Amount Paid: ₹" + amount + "\n\n"
-                + "We look forward to hosting you.\n"
-                + "Thank you for choosing our resort!\n\n"
-                + "Best Regards,\n"
-                + "Elite Resort Team";
+        Map<String, Object> body = Map.of(
+                "sender", Map.of(
+                        "email", senderEmail,
+                        "name", senderName
+                ),
+                "to", new Object[]{
+                        Map.of("email", userEmail)
+                },
+                "subject", "Booking Confirmed – Payment Successful",
+                "htmlContent", htmlContent
+        );
 
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(userEmail);
-        email.setSubject(subject);
-        email.setText(message);
 
-        mailSender.send(email);
+        webClient.post()
+                .uri("https://api.brevo.com/v3/smtp/email")
+                .header("api-key", apiKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block(); // blocking call is OK here since service method is not reactive
     }
 }
