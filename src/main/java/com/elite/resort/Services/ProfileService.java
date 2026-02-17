@@ -23,9 +23,13 @@ public class ProfileService {
         Optional<Profile> existing = profileRepository.findByUserId(userId);
 
         Profile profile;
-
         if (existing.isPresent()) {
             profile = existing.get();
+
+            // ⭐ ALWAYS sync from token
+            profile.setName(name);
+            profile.setEmail(email);
+
         } else {
             profile = new Profile();
             profile.setUserId(userId);

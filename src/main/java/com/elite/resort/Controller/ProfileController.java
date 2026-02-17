@@ -34,7 +34,8 @@ public class ProfileController {
         String userId = jwtUtil.extractUserId(token);
         String name = jwtUtil.extractName(token);
         String email = jwtUtil.extractEmail(token);
-
+        System.out.println("NAME FROM TOKEN = " + name);
+        System.out.println("USERID FROM TOKEN = " + userId);
         Profile profile = profileService.createOrUpdateProfile(userId, name, email, request);
 
         return ResponseEntity.ok(profile);
