@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Document(collection = "bookings")
 @Data
@@ -21,4 +22,7 @@ public class Booking {
 
     private double totalAmount;
     private String status;
+
+    private String paymentId;  // added
+    private LocalDateTime createdAt;
 }
