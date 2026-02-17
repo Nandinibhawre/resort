@@ -103,35 +103,31 @@ public class EmailService {
         String htmlContent =
                 "<h2>Payment Successful ✅</h2>" +
                         "<p>Your booking is now <b>CONFIRMED</b>.</p>" +
-                        "<h3>Booking Details:</h3>" +
                         "<ul>" +
                         "<li><b>Room ID:</b> " + roomId + "</li>" +
                         "<li><b>Check-in:</b> " + checkIn + "</li>" +
                         "<li><b>Check-out:</b> " + checkOut + "</li>" +
                         "<li><b>Total Paid:</b> ₹" + amount + "</li>" +
-                        "</ul>" +
-                        "<p>We look forward to hosting you at <b>Elite Resort</b>.</p>";
+                        "</ul>";
 
         Map<String, Object> body = Map.of(
                 "sender", Map.of(
                         "email", senderEmail,
                         "name", senderName
                 ),
-                "to", new Object[]{
+                "to", java.util.List.of(   // ✅ IMPORTANT FIX
                         Map.of("email", userEmail)
-                },
+                ),
                 "subject", "Booking Confirmed – Payment Successful",
                 "htmlContent", htmlContent
         );
 
-
         webClient.post()
                 .uri("/smtp/email")
-                .header("api-key", apiKey)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(String.class)
-                .block(); // blocking call is OK here since service method is not reactive
+                .block();
     }
 }
