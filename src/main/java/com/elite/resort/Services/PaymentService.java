@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class PaymentService {
     private final PaymentRepo paymentRepository;
+    private  final UserRepo  userRepository;
     private final BookingRepo bookingRepository;
     private final EmailService emailService;
 
@@ -49,13 +50,14 @@ public class PaymentService {
         booking.setStatus("CONFIRMED");
         bookingRepository.save(booking);
 
-        // 5️⃣ Send confirmation email
+        User user = userRepository.findById(booking.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         emailService.sendPaymentSuccessEmail(
-                booking.getUserId(),
-                booking.getRoomId(),
+                user.getEmail(),          // ✅ REAL EMAIL (not userId)
                 booking.getCheckIn(),
                 booking.getCheckOut(),
-                booking.getTotalAmount()
+                payment.getAmount()
         );
 
         return payment;

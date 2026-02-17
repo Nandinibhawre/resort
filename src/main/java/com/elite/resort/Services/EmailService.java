@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -25,13 +26,11 @@ public class EmailService {
 
     @Value("${brevo.sender.name}")
     private String senderName;
-
-    // 🌐 Brevo WebClient
     private final WebClient webClient =
             WebClient.create("https://api.brevo.com/v3");
 
     // =====================================================
-    // ✅ 1. ACCOUNT CREATED EMAIL
+    // ACCOUNT CREATED EMAIL
     // =====================================================
     public void sendAccountCreatedEmail(String toEmail, String name) {
 
@@ -47,7 +46,7 @@ public class EmailService {
     }
 
     // =====================================================
-    // ✅ 2. BOOKING CONFIRMATION EMAIL
+    // BOOKING CONFIRMATION EMAIL
     // =====================================================
     public void sendBookingConfirmationEmail(
             String toEmail,
@@ -67,43 +66,47 @@ public class EmailService {
 
         sendEmail(toEmail, "Booking Confirmed - Elite Resort", html);
     }
-    // ================= BOOKING CONFIRMATION AFTER PAYMENT =================
+
+    // =====================================================
+    // PAYMENT SUCCESS EMAIL
+    // =====================================================
     public void sendPaymentSuccessEmail(
-            String toEmail,
-            String roomId,
+            String userEmail,
             LocalDate checkIn,
             LocalDate checkOut,
             double amount
-
-    )
-
-    {
+    ) {
 
         String htmlContent =
                 "<h2>Payment Successful ✅</h2>" +
                         "<p>Your booking is now <b>CONFIRMED</b>.</p>" +
                         "<ul>" +
-                        "<li><b>Room ID:</b> " + roomId + "</li>" +
                         "<li><b>Check-in:</b> " + checkIn + "</li>" +
                         "<li><b>Check-out:</b> " + checkOut + "</li>" +
                         "<li><b>Total Paid:</b> ₹" + amount + "</li>" +
-                        "</ul>";
-        System.out.println("Sending email to: " + toEmail);
-        sendEmail(toEmail, "Booking Confirmed – Payment Successful", htmlContent);
+                        "</ul>" +
+                        "<p>We look forward to hosting you at <b>Elite Resort</b>.</p>";
 
+        sendEmail(userEmail, "Booking Confirmed – Payment Successful", htmlContent);
     }
+
     // =====================================================
-    // ✅ COMMON EMAIL METHOD (BREVO API)
+    // COMMON EMAIL METHOD
     // =====================================================
     private void sendEmail(String toEmail, String subject, String htmlContent) {
+
+        // ✅ validation to prevent Brevo 400 error
+        if (toEmail == null || toEmail.isBlank() || !toEmail.contains("@")) {
+            throw new RuntimeException("Invalid user email: " + toEmail);
+        }
 
         Map<String, Object> body = Map.of(
                 "sender", Map.of(
                         "email", senderEmail,
                         "name", senderName
                 ),
-                "to", java.util.List.of(
-                        Map.of("email", toEmail)
+                "to", List.of(
+                        Map.of("email", toEmail.trim())
                 ),
                 "subject", subject,
                 "htmlContent", htmlContent
@@ -118,7 +121,7 @@ public class EmailService {
                 .onStatus(
                         status -> status.isError(),
                         response -> response.bodyToMono(String.class)
-                                .map(msg -> new RuntimeException("BREVO REAL ERROR → " + msg))
+                                .map(msg -> new RuntimeException("BREVO ERROR → " + msg))
                 )
                 .bodyToMono(String.class)
                 .block();
