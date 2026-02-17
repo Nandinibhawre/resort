@@ -74,7 +74,10 @@ public class EmailService {
             LocalDate checkIn,
             LocalDate checkOut,
             double amount
-    ) {
+
+    )
+
+    {
 
         String htmlContent =
                 "<h2>Payment Successful ✅</h2>" +
@@ -87,6 +90,7 @@ public class EmailService {
                         "</ul>";
 
         sendEmail(userEmail, "Booking Confirmed – Payment Successful", htmlContent);
+        System.out.println("Sending email to: " + userEmail);
     }
     // =====================================================
     // ✅ COMMON EMAIL METHOD (BREVO API)
