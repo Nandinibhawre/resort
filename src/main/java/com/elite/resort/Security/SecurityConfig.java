@@ -39,7 +39,7 @@ public class SecurityConfig
                                 "/api/contact/**",
                                 "/api/profile/**",
                                 "/api/images/**",
-                                "api/payments/**"
+                                "/api/payments/**"
                         ).permitAll()
 
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
