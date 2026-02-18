@@ -20,12 +20,13 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class PaymentService {
     private final PaymentRepo paymentRepository;
-    private  final UserRepo  userRepository;
+    private final UserRepo userRepository;
     private final BookingRepo bookingRepository;
     private final EmailService emailService;
 
 
-    public Payment makePayment(String bookingId, String method, String transactionId) {
+    public Payment makePayment(String bookingId, String method, String transactionId)
+    {
 
         // 1️⃣ Find booking
         Booking booking = bookingRepository.findById(bookingId)
@@ -74,6 +75,61 @@ public class PaymentService {
                 payment.getAmount()
         );
 
+
+
+        // ❌ Update payment
+        payment.setStatus("CANCELLED");
+        paymentRepository.save(payment);
+
+        // ❌ Update booking
+        booking.setStatus("CANCELLED");
+        bookingRepository.save(booking);
+
+
+        // 📧 Send cancellation email
+        emailService.sendBookingCancellationEmail(
+                user.getEmail(),
+                booking.getRoomId(),
+                booking.getCheckIn(),
+                booking.getCheckOut(),
+                booking.getTotalAmount()
+        );
         return payment;
+    }
+    // ================= CANCEL PAYMENT + BOOKING =================
+    public void cancelPaymentAndBooking(String paymentId) {
+
+        // 🔍 Find payment
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
+
+        if ("CANCELLED".equals(payment.getStatus())) {
+            throw new RuntimeException("Payment already cancelled");
+        }
+
+        // 🔍 Find booking
+        Booking booking = bookingRepository.findById(payment.getBookingId())
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        // ❌ Update payment
+        payment.setStatus("CANCELLED");
+        paymentRepository.save(payment);
+
+        // ❌ Update booking
+        booking.setStatus("CANCELLED");
+        bookingRepository.save(booking);
+
+        // 🔍 Get user email
+        User user = userRepository.findById(booking.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // 📧 Send cancellation email
+        emailService.sendBookingCancellationEmail(
+                user.getEmail(),
+                booking.getRoomId(),
+                booking.getCheckIn(),
+                booking.getCheckOut(),
+                booking.getTotalAmount()
+        );
     }
 }

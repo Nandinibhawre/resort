@@ -19,7 +19,8 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @PostMapping("/pay")
-    public ResponseEntity<Payment> makePayment(@RequestBody PaymentRequest request) {
+    public ResponseEntity<Payment> makePayment(@RequestBody PaymentRequest request)
+    {
 
         Payment payment = paymentService.makePayment(
                 request.getBookingId(),
@@ -29,5 +30,14 @@ public class PaymentController {
         );
 
         return ResponseEntity.ok(payment);
+    }
+
+    // ❌ CANCEL PAYMENT → also cancels booking
+    @PutMapping("/{paymentId}/cancel")
+    public ResponseEntity<String> cancelPayment(@PathVariable String paymentId) {
+
+        paymentService.cancelPaymentAndBooking(paymentId);
+
+        return ResponseEntity.ok("Payment and booking cancelled successfully");
     }
 }

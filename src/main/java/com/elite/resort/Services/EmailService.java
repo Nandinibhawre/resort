@@ -91,6 +91,29 @@ public class EmailService {
     }
 
     // =====================================================
+    //  PAYMENT CANCELATION MAIL
+    // =====================================================
+    public void sendBookingCancellationEmail(
+            String userEmail,
+            String roomId,
+            LocalDate checkIn,
+            LocalDate checkOut,
+            double amount
+    ) {
+        String html =
+                "<h2>Booking Cancelled ❌</h2>" +
+                        "<p>Your payment and booking have been <b>cancelled</b>.</p>" +
+                        "<ul>" +
+                        "<li><b>Room ID:</b> " + roomId + "</li>" +
+                        "<li><b>Check-in:</b> " + checkIn + "</li>" +
+                        "<li><b>Check-out:</b> " + checkOut + "</li>" +
+                        "<li><b>Amount:</b> ₹" + amount + "</li>" +
+                        "</ul>" +
+                        "<p>If payment was deducted, refund will be processed soon.</p>";
+
+        // use your existing Brevo WebClient send logic here
+    }
+    // =====================================================
     // COMMON EMAIL METHOD
     // =====================================================
     private void sendEmail(String toEmail, String subject, String htmlContent) {
