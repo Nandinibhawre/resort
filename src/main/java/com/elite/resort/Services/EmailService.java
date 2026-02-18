@@ -111,6 +111,7 @@ public class EmailService {
                         "</ul>" +
                         "<p>If payment was deducted, refund will be processed soon.</p>";
 
+        sendEmail(userEmail, "Booking Cancelled successfully", html);
         // use your existing Brevo WebClient send logic here
     }
     // =====================================================
