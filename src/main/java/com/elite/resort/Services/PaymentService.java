@@ -24,6 +24,7 @@ public class PaymentService {
     private final BookingRepo bookingRepository;
     private final EmailService emailService;
 
+
     public Payment makePayment(String bookingId, String method, String transactionId) {
 
         // 1️⃣ Find booking
@@ -44,7 +45,20 @@ public class PaymentService {
         payment.setStatus("SUCCESS");
         payment.setPaidAt(LocalDateTime.now());
 
-        paymentRepository.save(payment);
+        // ✅ SAVE PAYMENT FIRST (important)
+        Payment savedPayment = paymentRepository.save(payment);
+
+        // ✅ Update booking AFTER payment saved
+        booking.setStatus("CONFIRMED");
+        booking.setPaymentId(savedPayment.getId());
+
+        // ⭐ set createdAt if not already set
+        if (booking.getCreatedAt() == null) {
+            booking.setCreatedAt(LocalDateTime.now());
+        }
+
+        bookingRepository.save(booking);
+
 
         // 4️⃣ Update booking status → CONFIRMED
         booking.setStatus("CONFIRMED");
@@ -62,5 +76,4 @@ public class PaymentService {
 
         return payment;
     }
-
 }
