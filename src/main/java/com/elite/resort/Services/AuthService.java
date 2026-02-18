@@ -25,7 +25,7 @@ public class AuthService
 
 
     // USER REGISTER
-    public String registerUser(UserRegisterRequest request) {
+    public LoginResponse registerUser(UserRegisterRequest request) {
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
@@ -38,14 +38,30 @@ public class AuthService
 
         userRepository.save(user);
 
+        String role = "USER";
 
-        // ✅ SEND EMAIL AFTER REGISTER
+        // ✅ Generate JWT immediately after signup
+        String token = jwtUtil.generateToken(
+                user.getEmail(),
+                user.getName(),
+                user.getUserId(),
+                role
+        );
+
+        // ✅ Send welcome email
         emailService.sendAccountCreatedEmail(
                 user.getEmail(),
                 user.getName()
         );
-        return "User Registered Successfully";
+
+        return new LoginResponse(
+                token,
+                user.getName(),
+                user.getEmail(),
+                role
+        );
     }
+
 
     public LoginResponse userLogin(LoginRequest request) {
 

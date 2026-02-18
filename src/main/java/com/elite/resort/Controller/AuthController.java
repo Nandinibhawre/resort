@@ -6,6 +6,7 @@ import com.elite.resort.DTO.UserRegisterRequest;
 import com.elite.resort.Model.User;
 import com.elite.resort.Services.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +21,9 @@ public class AuthController
 {
     private final AuthService authService;
 
-    @PostMapping("/user/signup")
-    public String userSignup(@RequestBody UserRegisterRequest request)
-    {
-        return authService.registerUser(request);
+    @PostMapping("/register")
+    public ResponseEntity<LoginResponse> register(@RequestBody UserRegisterRequest request) {
+        return ResponseEntity.ok(authService.registerUser(request));
     }
 
     @PostMapping("/user/login")

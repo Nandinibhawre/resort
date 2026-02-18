@@ -14,9 +14,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EmailService {
 
-
-
-
     // 🔐 Brevo config from properties
     @Value("${brevo.api.key}")
     private String apiKey;
@@ -67,6 +64,7 @@ public class EmailService {
         sendEmail(toEmail, "Booking Confirmed - Elite Resort", html);
     }
 
+
     // =====================================================
     // PAYMENT SUCCESS EMAIL
     // =====================================================
@@ -93,6 +91,7 @@ public class EmailService {
     // =====================================================
     //  PAYMENT CANCELATION MAIL
     // =====================================================
+    
     public void sendBookingCancellationEmail(
             String userEmail,
             String roomId,
