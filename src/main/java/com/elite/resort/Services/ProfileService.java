@@ -1,6 +1,7 @@
 package com.elite.resort.Services;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import com.elite.resort.DTO.ProfileRequest;
@@ -47,6 +48,22 @@ public class ProfileService {
 
     public Profile getProfileByUserId(String userId) {
         return profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+    }
+
+    // ✅ Admin → get all user profiles
+    public List<Profile> getAllProfiles() {
+        return profileRepository.findAll();
+    }
+
+    // 🔍 Admin → search profiles by name
+    public List<Profile> searchProfilesByName(String name) {
+        return profileRepository.findByNameContainingIgnoreCase(name);
+    }
+
+    // 🔍 Admin → get profile by email
+    public Profile getProfileByEmail(String email) {
+        return profileRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
     }
 }

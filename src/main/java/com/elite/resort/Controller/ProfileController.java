@@ -7,14 +7,17 @@ import com.elite.resort.Security.JwtUtil;
 import com.elite.resort.Services.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/profile")
+@RequestMapping("/api/admin")
 public class ProfileController {
 
     @Autowired
@@ -49,6 +52,31 @@ public class ProfileController {
         String userId = jwtUtil.extractUserId(token);
 
         return ResponseEntity.ok(profileService.getProfileByUserId(userId));
+    }
+
+    // =========================================================
+    // ================= ADMIN APIs ============================
+    // =========================================================
+
+    // ✅ ADMIN → Get all user profiles
+    @GetMapping("/profile/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Profile>> getAllProfiles() {
+        return ResponseEntity.ok(profileService.getAllProfiles());
+    }
+
+    // 🔍 ADMIN → Search profiles by name
+    @GetMapping("/profile/search")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Profile>> searchProfiles(@RequestParam String name) {
+        return ResponseEntity.ok(profileService.searchProfilesByName(name));
+    }
+
+    // 🔍 ADMIN → Get profile by email
+    @GetMapping("/profile/email")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Profile> getByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(profileService.getProfileByEmail(email));
     }
 }
 
