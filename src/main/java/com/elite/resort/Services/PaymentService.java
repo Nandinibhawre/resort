@@ -128,7 +128,7 @@ public class PaymentService {
 
         // 4️⃣ Confirm booking
         booking.setStatus("CONFIRMED");
-        booking.setPaymentId(savedPayment.getId());
+        booking.setPaymentId(savedPayment.getPaymentId());
         bookingRepository.save(booking);
 
         // 5️⃣ Send success email
