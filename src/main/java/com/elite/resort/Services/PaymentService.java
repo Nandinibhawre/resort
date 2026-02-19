@@ -78,11 +78,11 @@ public class PaymentService {
 
 
         // ❌ Update payment
-        payment.setStatus("CANCELLED");
+        payment.setStatus("CONFIRMED");
         paymentRepository.save(payment);
 
         // ❌ Update booking
-        booking.setStatus("CANCELLED");
+        booking.setStatus("CONFIRMED");
         bookingRepository.save(booking);
 
 
