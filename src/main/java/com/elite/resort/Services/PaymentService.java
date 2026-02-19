@@ -102,97 +102,75 @@ public class PaymentService {
 //        return payment;
 //    }
 
-    // ================= CREATE BOOKING =================
-    public Booking createBooking(String userId, String roomId, BookingRequest request) {
 
-        // 1️⃣ Find room
-        Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+    // ================= MAKE PAYMENT =================
+    public Payment createPayment(String bookingId, String method, String transactionId) {
 
-        // 2️⃣ Find user
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        // 1️⃣ Find booking
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
-        // 3️⃣ Check room active
-        if (!room.isAvailable()) {
-            throw new RoomUnavailableException("Room is currently unavailable");
+        // 2️⃣ Prevent double payment
+        if (!"PENDING_PAYMENT".equals(booking.getStatus())) {
+            throw new BadRequestException("Booking already paid or invalid");
         }
 
-        // 4️⃣ Check date conflicts
-        List<Booking> conflicts = bookingRepository.findConflictingBookings(
-                roomId,
-                request.getCheckInDate(),
-                request.getCheckOutDate()
-        );
+        // 3️⃣ Create payment
+        Payment payment = new Payment();
+        payment.setBookingId(bookingId);
+        payment.setMethod(method);
+        payment.setTransactionId(transactionId);
+        payment.setAmount(booking.getTotalAmount());
+        payment.setStatus("SUCCESS");
+        payment.setPaidAt(LocalDateTime.now());
 
-        if (!conflicts.isEmpty()) {
-            throw new RoomUnavailableException("Room already booked for selected dates");
-        }
+        Payment savedPayment = paymentRepository.save(payment);
 
-        // 5️⃣ Validate dates
-        long days = ChronoUnit.DAYS.between(
-                request.getCheckInDate(),
-                request.getCheckOutDate()
-        );
-
-        if (days <= 0) {
-            throw new RoomUnavailableException("Check-out must be after check-in");
-        }
-
-        // 6️⃣ Calculate total
-        double total = days * room.getPricePerNight();
-
-        // 7️⃣ Create booking
-        Booking booking = new Booking();
-        booking.setRoomId(room.getRoomId());
-        booking.setUserId(user.getUserId());
-        booking.setCheckIn(request.getCheckInDate());
-        booking.setCheckOut(request.getCheckOutDate());
-        booking.setTotalAmount(total);
-        booking.setStatus("PENDING_PAYMENT");
-
-        // 🔥 createdAt & updatedAt AUTO handled by Mongo Auditing
+        // 4️⃣ Confirm booking
+        booking.setStatus("CONFIRMED");
+        booking.setPaymentId(savedPayment.getId());
         bookingRepository.save(booking);
 
-        // 8️⃣ Send confirmation email
-        emailService.sendBookingConfirmationEmail(
+        // 5️⃣ Send success email
+        User user = userRepository.findById(booking.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        emailService.sendPaymentSuccessEmail(
                 user.getEmail(),
-                user.getName(),
-                room.getRoomNumber(),
-                request.getCheckInDate(),
-                request.getCheckOutDate()
+                booking.getCheckIn(),
+                booking.getCheckOut(),
+                savedPayment.getAmount()
         );
 
-        return booking;
+        return savedPayment;
     }
+
     // ================= CANCEL PAYMENT + BOOKING =================
     public void cancelPaymentAndBooking(String paymentId) {
 
-        // 🔍 Find payment
+        // 1️⃣ Find payment
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
 
         if ("CANCELLED".equals(payment.getStatus())) {
-            throw new RuntimeException("Payment already cancelled");
+            throw new BadRequestException("Payment already cancelled");
         }
 
-        // 🔍 Find booking
+        // 2️⃣ Find booking
         Booking booking = bookingRepository.findById(payment.getBookingId())
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
-        // ❌ Update payment
+        // 3️⃣ Cancel payment & booking
         payment.setStatus("CANCELLED");
         paymentRepository.save(payment);
 
-        // ❌ Update booking
         booking.setStatus("CANCELLED");
         bookingRepository.save(booking);
 
-        // 🔍 Get user email
+        // 4️⃣ Send cancel email
         User user = userRepository.findById(booking.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // 📧 Send cancellation email
         emailService.sendBookingCancellationEmail(
                 user.getEmail(),
                 booking.getRoomId(),
@@ -201,4 +179,40 @@ public class PaymentService {
                 booking.getTotalAmount()
         );
     }
+//    // ================= CANCEL PAYMENT + BOOKING =================
+//    public void cancelPaymentAndBooking(String paymentId) {
+//
+//        // 🔍 Find payment
+//        Payment payment = paymentRepository.findById(paymentId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
+//
+//        if ("CANCELLED".equals(payment.getStatus())) {
+//            throw new RuntimeException("Payment already cancelled");
+//        }
+//
+//        // 🔍 Find booking
+//        Booking booking = bookingRepository.findById(payment.getBookingId())
+//                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+//
+//        // ❌ Update payment
+//        payment.setStatus("CANCELLED");
+//        paymentRepository.save(payment);
+//
+//        // ❌ Update booking
+//        booking.setStatus("CANCELLED");
+//        bookingRepository.save(booking);
+//
+//        // 🔍 Get user email
+//        User user = userRepository.findById(booking.getUserId())
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//
+//        // 📧 Send cancellation email
+//        emailService.sendBookingCancellationEmail(
+//                user.getEmail(),
+//                booking.getRoomId(),
+//                booking.getCheckIn(),
+//                booking.getCheckOut(),
+//                booking.getTotalAmount()
+//        );
+//    }
 }

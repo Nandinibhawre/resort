@@ -22,7 +22,7 @@ public class PaymentController {
     public ResponseEntity<Payment> makePayment(@RequestBody PaymentRequest request)
     {
 
-        Payment payment = paymentService.makePayment(
+        Payment payment = paymentService.createPayment(
                 request.getBookingId(),
                 request.getMethod(),
                 request.getTransactionId()
