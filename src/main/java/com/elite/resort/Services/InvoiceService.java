@@ -21,6 +21,8 @@ public class InvoiceService {
     private final UserRepo userRepository;
     public Invoice generateInvoiceAndSend(Booking booking, double roomPrice) {
 
+        System.out.println("=== ENTERED generateInvoiceAndSend ===");
+        System.out.println("Booking ID: " + booking.getBookingId());
         long nights = ChronoUnit.DAYS.between(
                 booking.getCheckIn(),
                 booking.getCheckOut()
@@ -51,12 +53,18 @@ public class InvoiceService {
 
         // ✅ Send email using Brevo
         brevoEmailService.sendInvoiceEmail(userEmail, pdfBytes);
+        System.out.println("Saving invoice to MongoDB...");
 
+
+
+        System.out.println("✅ Invoice saved with ID: " + savedInvoice.getId());
         return savedInvoice;
+
     }
 
     public Invoice getByBookingId(String bookingId) {
         return invoiceRepository.findByBookingId(bookingId)
                 .orElseThrow(() -> new RuntimeException("Invoice not found"));
+
     }
 }
