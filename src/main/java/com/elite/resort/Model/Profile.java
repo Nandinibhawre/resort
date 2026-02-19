@@ -23,6 +23,4 @@ public class Profile {
     private String idProof;
     private String photoUrl;
 
-
-
 }
