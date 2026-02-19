@@ -28,7 +28,7 @@ public class PaymentService {
     private final UserRepo userRepository;
     private final BookingRepo bookingRepository;
     private final EmailService emailService;
-    private final RoomRepo roomRepository;
+    private  final InvoiceService invoiceService;
 
 //    public Payment makePayment(String bookingId, String method, String transactionId)
 //    {
@@ -131,6 +131,10 @@ public class PaymentService {
         booking.setPaymentId(savedPayment.getPaymentId());
         bookingRepository.save(booking);
 
+
+        // 3️⃣ 🔥 Generate invoice here (IMPORTANT)
+        invoiceService.generateInvoiceAndSend(booking, booking.getTotalAmount());
+        
         // 5️⃣ Send success email
         User user = userRepository.findById(booking.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
