@@ -54,8 +54,8 @@ public class PaymentService {
         booking.setPaymentId(savedPayment.getId());
 
         // ⭐ set createdAt if not already set
-        if (booking.getCreatedAt() == null) {
-            booking.setCreatedAt(LocalDateTime.now());
+        if (booking.getPaymentDoneAt() == null) {
+            booking.setPaymentDoneAt(LocalDateTime.now());
         }
 
         bookingRepository.save(booking);
