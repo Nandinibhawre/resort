@@ -43,7 +43,7 @@ public class SecurityConfig
                         ).permitAll()
 
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
+                                .requestMatchers("/api/profile/**").hasRole("ADMIN")
 
 //                        .requestMatchers("/api/images/**").hasRole("ADMIN")
 

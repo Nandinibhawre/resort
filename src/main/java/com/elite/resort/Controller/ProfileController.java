@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/profile")
 public class ProfileController {
 
     @Autowired
@@ -59,21 +59,21 @@ public class ProfileController {
     // =========================================================
 
     // ✅ ADMIN → Get all user profiles
-    @GetMapping("/profile/all")
+    @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Profile>> getAllProfiles() {
         return ResponseEntity.ok(profileService.getAllProfiles());
     }
 
     // 🔍 ADMIN → Search profiles by name
-    @GetMapping("/profile/search")
+    @GetMapping("/search")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Profile>> searchProfiles(@RequestParam String name) {
         return ResponseEntity.ok(profileService.searchProfilesByName(name));
     }
 
     // 🔍 ADMIN → Get profile by email
-    @GetMapping("/profile/email")
+    @GetMapping("/email")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Profile> getByEmail(@RequestParam String email) {
         return ResponseEntity.ok(profileService.getProfileByEmail(email));
