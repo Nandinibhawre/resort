@@ -2,11 +2,16 @@ package com.elite.resort.Services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +30,7 @@ public class EmailService {
     private String senderName;
     private final WebClient webClient =
             WebClient.create("https://api.brevo.com/v3");
-
+    private final RestTemplate restTemplate = new RestTemplate();
     // =====================================================
     // ACCOUNT CREATED EMAIL
     // =====================================================
@@ -112,6 +117,41 @@ public class EmailService {
 
         sendEmail(userEmail, "Booking Cancelled successfully", html);
         // use your existing Brevo WebClient send logic here
+    }
+
+
+    public void sendInvoiceEmail(String toEmail, byte[] pdfBytes) {
+
+        String url = "https://api.brevo.com/v3/smtp/email";
+
+        String pdfBase64 = Base64.getEncoder().encodeToString(pdfBytes);
+
+        Map<String, Object> body = new HashMap<>();
+
+        body.put("sender", Map.of(
+                "name", senderName,
+                "email", senderEmail
+        ));
+
+        body.put("to", List.of(Map.of("email", toEmail)));
+
+        body.put("subject", "Your Hotel Booking Invoice");
+        body.put("htmlContent", "<p>Thank you for your booking.<br/>Please find attached invoice.</p>");
+
+        body.put("attachment", List.of(
+                Map.of(
+                        "name", "invoice.pdf",
+                        "content", pdfBase64
+                )
+        ));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("api-key", apiKey);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+        restTemplate.postForEntity(url, request, String.class);
     }
     // =====================================================
     // COMMON EMAIL METHOD

@@ -1,11 +1,12 @@
 package com.elite.resort.Repository;
 
-// import com.elite.resort.entity.Invoice;
-// import org.springframework.data.mongodb.repository.MongoRepository;
+ import com.elite.resort.Model.Invoice;
 
-// import java.util.Optional;
+ import org.springframework.data.mongodb.repository.MongoRepository;
 
-// public interface InvoiceRepo extends MongoRepository<Invoice, String> {
+ import java.util.Optional;
 
-//     Optional<Invoice> findByBookingId(String bookingId);
-// }
+ public interface InvoiceRepo extends MongoRepository<Invoice, String> {
+
+     Optional<Invoice> findByBookingId(String bookingId);
+ }
