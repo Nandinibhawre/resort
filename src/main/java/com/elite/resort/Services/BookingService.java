@@ -13,6 +13,7 @@ import com.elite.resort.Repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -69,8 +70,8 @@ public class BookingService {
         booking.setUserId(user.getUserId());
         booking.setCheckIn(request.getCheckInDate());
         booking.setCheckOut(request.getCheckOutDate());
-        booking.setCreatedAt(booking.getCreatedAt());
-        booking.setUpdatedAt(booking.getPaymentDoneAt());
+        booking.setCreatedAt(LocalDateTime.now());
+        booking.setUpdatedAt(LocalDateTime.now());
         booking.setTotalAmount(total);
         booking.setStatus("PENDING_PAYMENT");
 
