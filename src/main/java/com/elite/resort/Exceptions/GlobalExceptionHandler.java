@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
                 new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value()),
                 HttpStatus.BAD_REQUEST
         );
-    }
+}
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedException ex) {

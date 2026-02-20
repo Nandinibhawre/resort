@@ -14,7 +14,8 @@ public class ImageController {
     @Autowired
     private S3Service s3Service;
 
-    public ImageController(S3Service s3Service) {
+    public ImageController(S3Service s3Service)
+    {
         this.s3Service = s3Service;
     }
 
