@@ -32,92 +32,45 @@ public class PaymentService {
 
     // ================= MAKE PAYMENT =================
     public Payment createPayment(String bookingId, String method, String transactionId) {
-        try {
-            Booking booking = bookingRepository.findById(bookingId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
-            System.out.println("Booking found: " + booking.getBookingId());
-            System.out.println("Status: " + booking.getStatus());
-            System.out.println("TotalAmount: " + booking.getTotalAmount());
-            System.out.println("RoomPrice: " + booking.getTotalAmount());
+        // 1️⃣ Find booking
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
-            if (!"PENDING_PAYMENT".equals(booking.getStatus())) {
-                throw new BadRequestException("Booking already paid or invalid");
-            }
-
-            Payment payment = new Payment();
-            payment.setBookingId(bookingId);
-            payment.setMethod(method);
-            payment.setTransactionId(transactionId);
-            payment.setAmount(booking.getTotalAmount());
-            payment.setStatus("SUCCESS");
-            payment.setPaidAt(LocalDateTime.now());
-
-            Payment savedPayment = paymentRepository.save(payment);
-
-            booking.setStatus("CONFIRMED");
-            booking.setPaymentId(savedPayment.getPaymentId());
-            bookingRepository.save(booking);
-
-            // 🔥 invoice (safe)
-            try {
-                invoiceService.generateInvoiceAndSend(booking, booking.getTotalAmount());
-                System.out.println("Invoice generated");
-            } catch (Exception e) {
-                System.out.println("Invoice failed: " + e.getMessage());
-            }
-
-            return savedPayment;
-
-        } catch (Exception e) {
-            e.printStackTrace(); // 🔥 THIS WILL SHOW REAL ERROR
-            throw e;
+        // 2️⃣ Prevent double payment
+        if (!"PENDING_PAYMENT".equals(booking.getStatus())) {
+            throw new BadRequestException("Booking already paid or invalid");
         }
-//        // 1️⃣ Find booking
-//        Booking booking = bookingRepository.findById(bookingId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
-//
-//        // 2️⃣ Prevent double payment
-//        if (!"PENDING_PAYMENT".equals(booking.getStatus())) {
-//            throw new BadRequestException("Booking already paid or invalid");
-//        }
-//
-//        // 3️⃣ Create payment
-//        Payment payment = new Payment();
-//        payment.setBookingId(bookingId);
-//        payment.setMethod(method);
-//        payment.setTransactionId(transactionId);
-//        payment.setAmount(booking.getTotalAmount());
-//        payment.setStatus("SUCCESS");
-//        payment.setPaidAt(LocalDateTime.now());
-//
-//        Payment savedPayment = paymentRepository.save(payment);
-//
-//        // 4️⃣ Confirm booking
-//        booking.setStatus("CONFIRMED");
-//        booking.setPaymentId(savedPayment.getPaymentId());
-//        bookingRepository.save(booking);
-//
-//        // 🔥 SAFE invoice generation (never break payment flow)
-//        try {
-//            invoiceService.generateInvoiceAndSend(booking, booking.getTotalAmount());
-//            System.out.println("✅ Invoice generated successfully");
-//        } catch (Exception e) {
-//            System.out.println("❌ Invoice generation failed: " + e.getMessage());
-//        }
-//
-//        // 5️⃣ Send success email
-//        User user = userRepository.findById(booking.getUserId())
-//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-//
-//        emailService.sendPaymentSuccessEmail(
-//                user.getEmail(),
-//                booking.getCheckIn(),
-//                booking.getCheckOut(),
-//                savedPayment.getAmount()
-//        );
 
-//        return savedPayment;
+        // 3️⃣ Create payment
+        Payment payment = new Payment();
+        payment.setBookingId(bookingId);
+        payment.setMethod(method);
+        payment.setTransactionId(transactionId);
+        payment.setAmount(booking.getTotalAmount());
+        payment.setStatus("SUCCESS");
+        payment.setPaidAt(LocalDateTime.now());
+
+        Payment savedPayment = paymentRepository.save(payment);
+
+        // 4️⃣ Confirm booking
+        booking.setStatus("CONFIRMED");
+        booking.setPaymentId(savedPayment.getPaymentId());
+        bookingRepository.save(booking);
+
+        invoiceService.generateInvoiceAndSend(booking, booking.getTotalAmount());
+        // 5️⃣ Send success email
+        User user = userRepository.findById(booking.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        emailService.sendPaymentSuccessEmail(
+                user.getEmail(),
+                booking.getCheckIn(),
+                booking.getCheckOut(),
+                savedPayment.getAmount()
+        );
+
+        return savedPayment;
     }
 
     // ================= CANCEL PAYMENT + BOOKING =================

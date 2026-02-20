@@ -28,7 +28,7 @@ public class InvoiceService {
                 booking.getCheckOut()
         );
 
-        double roomAmount = roomPrice * nights;
+        double roomAmount = roomPrice;
         double tax = roomAmount * 0.10;
         double finalAmount = roomAmount + tax;
 
@@ -42,6 +42,7 @@ public class InvoiceService {
 
         Invoice savedInvoice = invoiceRepository.save(invoice);
 
+        System.out.println("Invoice saved in DB");
         // Generate PDF
         byte[] pdfBytes = pdfService.generateInvoicePdf(booking, savedInvoice);
 
@@ -54,8 +55,6 @@ public class InvoiceService {
         // ✅ Send email using Brevo
         brevoEmailService.sendInvoiceEmail(userEmail, pdfBytes);
         System.out.println("Saving invoice to MongoDB...");
-
-
 
         System.out.println("✅ Invoice saved with ID: " + savedInvoice.getId());
         return savedInvoice;
