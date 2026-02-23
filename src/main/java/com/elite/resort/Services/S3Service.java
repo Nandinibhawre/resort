@@ -35,7 +35,6 @@ public class S3Service {
 
         // 👉 create key with folder
         String key = "Resort/RoomImages";
-
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)

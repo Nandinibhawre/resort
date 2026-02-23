@@ -28,6 +28,7 @@ public class EmailService {
 
     @Value("${brevo.sender.name}")
     private String senderName;
+
     private final WebClient webClient =
             WebClient.create("https://api.brevo.com/v3");
     private final RestTemplate restTemplate = new RestTemplate();
