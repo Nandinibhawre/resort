@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Profile {
 
     @Id
-    private String id;
+    private String profileid;
 
     private String userId;   // from token
     private String name;     // from token

@@ -74,9 +74,9 @@ public class ProfileController {
     // ❌ ADMIN → Delete user profile by ID
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteProfile(@PathVariable String id) {
+    public ResponseEntity<String> deleteProfile(@PathVariable String profileid) {
 
-        profileService.deleteProfile(id);
+        profileService.deleteProfile(profileid);
         return ResponseEntity.ok("User deleted successfully");
     }
 }

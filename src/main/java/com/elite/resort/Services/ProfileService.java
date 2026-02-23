@@ -60,10 +60,10 @@ public class ProfileService {
     public List<Profile> searchProfilesByName(String name) {
         return profileRepository.findByNameContainingIgnoreCase(name);
     }
-    
-    public void deleteProfile(String id) {
 
-        Profile profile = profileRepository.findById(id)
+    public void deleteProfile(String profileid) {
+
+        Profile profile = profileRepository.findById(profileid)
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
 
         profileRepository.delete(profile);
