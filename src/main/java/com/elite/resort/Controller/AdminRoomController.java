@@ -17,6 +17,7 @@ public class AdminRoomController {
 
     private final AdminRoomService adminRoomService;
 
+
     @PostMapping
     public Room addRoom(@RequestBody Room room) {
         return adminRoomService.addRoom(room);

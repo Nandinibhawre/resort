@@ -46,7 +46,7 @@ public class SecurityConfig
                                 "/api/images/**",
                                 "/api/payments/**"
                         ).permitAll()
-
+                                .requestMatchers("/api/admin/rooms/**").authenticated()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/profile/**").hasRole("ADMIN")
 
