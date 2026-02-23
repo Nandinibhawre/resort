@@ -71,12 +71,13 @@ public class ProfileController {
     public ResponseEntity<List<Profile>> searchProfiles(@RequestParam String name) {
         return ResponseEntity.ok(profileService.searchProfilesByName(name));
     }
-
-    // 🔍 ADMIN → Get profile by email
-    @GetMapping("/email")
+    // ❌ ADMIN → Delete user profile by ID
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Profile> getByEmail(@RequestParam String email) {
-        return ResponseEntity.ok(profileService.getProfileByEmail(email));
+    public ResponseEntity<String> deleteProfile(@PathVariable String id) {
+
+        profileService.deleteProfile(id);
+        return ResponseEntity.ok("User deleted successfully");
     }
 }
 

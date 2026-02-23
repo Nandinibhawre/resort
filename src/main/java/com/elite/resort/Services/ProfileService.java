@@ -60,10 +60,12 @@ public class ProfileService {
     public List<Profile> searchProfilesByName(String name) {
         return profileRepository.findByNameContainingIgnoreCase(name);
     }
+    
+    public void deleteProfile(String id) {
 
-    // 🔍 Admin → get profile by email
-    public Profile getProfileByEmail(String email) {
-        return profileRepository.findByEmail(email)
+        Profile profile = profileRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        profileRepository.delete(profile);
     }
 }
