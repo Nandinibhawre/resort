@@ -16,8 +16,8 @@ public class ReportService {
 
         long totalUsers = userRepository.count();
         long totalRooms = roomRepository.count();
-        long activeRooms = roomRepository.countByActiveTrue();
-        long inactiveRooms = roomRepository.countByActiveFalse();
+        long activeRooms = roomRepository.countByAvailableTrue();
+        long inactiveRooms = roomRepository.countByAvailableFalse();
 
         return new ReportStatsDTO(
                 totalUsers,
