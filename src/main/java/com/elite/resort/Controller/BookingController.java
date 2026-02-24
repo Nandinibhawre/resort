@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/bookings")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class BookingController {
 
