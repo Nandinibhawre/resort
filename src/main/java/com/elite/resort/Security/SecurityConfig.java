@@ -1,6 +1,5 @@
 package com.elite.resort.Security;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,79 +19,72 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity
 @RequiredArgsConstructor
-public class SecurityConfig
-{
+public class SecurityConfig {
 
-    private final JwtFilter jwtFilter;
+        private final JwtFilter jwtFilter;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
-                )
-                .authorizeHttpRequests(auth -> auth
+                http
+                                .csrf(csrf -> csrf.disable())
+                                .sessionManagement(session -> session.sessionCreationPolicy(
+                                                SessionCreationPolicy.STATELESS))
+                                .authorizeHttpRequests(auth -> auth
 
-                        // 🔓 PUBLIC APIs
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/api/rooms/**",
-                                "/api/contact/**",
-                                "/api/profile/**",
-                                "/api/payments/**",
-                                "/api/images/**"
-                        ).permitAll()
-                                .requestMatchers("/api/admin/rooms/**").authenticated()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/api/profile/**").hasRole("ADMIN")
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                                // 🔓 PUBLIC APIs
+                                                .requestMatchers(
+                                                                "/api/auth/**",
+                                                                "/api/rooms/**",
+                                                                "/contact/**",
+                                                                "/api/profile/**",
+                                                                "/api/payments/**",
+                                                                "/api/images/**")
+                                                .permitAll()
+                                                .requestMatchers("/api/admin/rooms/**").authenticated()
+                                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                                .requestMatchers("/api/profile/**").hasRole("ADMIN")
+                                                .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                )
+                                )
 
-                .addFilterBefore(
-                        jwtFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                );
+                                .addFilterBefore(
+                                                jwtFilter,
+                                                UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    // ✅ CORS CONFIGURATION
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+        // ✅ CORS CONFIGURATION
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
 
-        CorsConfiguration config = new CorsConfiguration();
+                CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of(
-                "https://elite-resort-website.vercel.app/",
-                "https://admin-elite-resort.vercel.app/",
-                "http://localhost:5173"      // Vite
-        ));
+                config.setAllowedOrigins(List.of(
+                                "https://elite-resort-website.vercel.app/",
+                                "https://admin-elite-resort.vercel.app/",
+                                "http://localhost:5173" // Vite
+                ));
 
-        config.setAllowedMethods(List.of(
-                "GET","POST","PUT","DELETE"
-        ));
+                config.setAllowedMethods(List.of(
+                                "GET", "POST", "PUT", "DELETE"));
 
-        config.setAllowedHeaders(List.of("*"));
+                config.setAllowedHeaders(List.of("*"));
 
-        config.setAllowCredentials(true);
+                config.setAllowCredentials(true);
 
-        config.setExposedHeaders(List.of("Authorization"));
+                config.setExposedHeaders(List.of("Authorization"));
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration("/**", config);
+                source.registerCorsConfiguration("/**", config);
 
-        return source;
-    }
+                return source;
+        }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 }
