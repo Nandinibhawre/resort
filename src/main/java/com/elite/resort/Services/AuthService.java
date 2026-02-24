@@ -90,7 +90,7 @@ public class AuthService
                 role
         );
     }
-    public String adminLogin(LoginRequest request) {
+    public LoginResponse adminLogin(LoginRequest request) {
 
         Admin admin = adminRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
@@ -99,11 +99,20 @@ public class AuthService
             throw new RuntimeException("Invalid password");
         }
 
-        return "token:" + jwtUtil.generateToken(
+        String role = "ADMIN";
+
+        String token = jwtUtil.generateToken(
                 admin.getEmail(),
+                admin.getName(),      // make sure Admin has name field
+                admin.getAdminId(),   // change if your id field name is different
+                role
+        );
+
+        return new LoginResponse(
+                token,
                 admin.getName(),
-                admin.getAdminId(),   // id second
-                "ADMIN"               // role third
+                admin.getEmail(),
+                role
         );
     }
 }

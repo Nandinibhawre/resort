@@ -33,7 +33,7 @@ public class AuthController {
     }
 
     @PostMapping("/admin/login")
-    public String adminLogin(@RequestBody LoginRequest request) {
-        return authService.adminLogin(request);
+    public ResponseEntity<LoginResponse> adminLogin(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.adminLogin(request));
     }
 }
