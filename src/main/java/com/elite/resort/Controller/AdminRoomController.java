@@ -52,10 +52,10 @@ public class AdminRoomController {
         return ResponseEntity.ok(adminRoomService.getAllBookingsForAdmin());
     }
 
-    @PatchMapping("/{id}/availability/{status}")
+    @PatchMapping("/{roomId}/availability/{status}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Room setAvailability(@PathVariable String id,
+    public Room setAvailability(@PathVariable String roomId,
                                 @PathVariable boolean status) {
-        return adminRoomService.setAvailability(id, status);
+        return adminRoomService.setAvailability(roomId, status);
     }
 }
