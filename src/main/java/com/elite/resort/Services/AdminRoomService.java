@@ -116,5 +116,13 @@ public class AdminRoomService {
 
         return response;
     }
+    public Room setAvailability(String id, boolean status) {
 
+        Room room = roomRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Room not found"));
+
+        room.setAvailable(status);
+
+        return roomRepository.save(room);
+    }
 }

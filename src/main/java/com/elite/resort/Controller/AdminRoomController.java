@@ -51,4 +51,11 @@ public class AdminRoomController {
     public ResponseEntity<List<AdminBookingView>> getAllBookings() {
         return ResponseEntity.ok(adminRoomService.getAllBookingsForAdmin());
     }
+
+    @PatchMapping("/{id}/availability/{status}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Room setAvailability(@PathVariable String id,
+                                @PathVariable boolean status) {
+        return adminRoomService.setAvailability(id, status);
+    }
 }
