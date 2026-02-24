@@ -21,7 +21,6 @@ public class ImageController {
 
 
     @PostMapping("/upload")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
             String imageUrl = s3Service.uploadFile(file);
