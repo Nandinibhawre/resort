@@ -49,8 +49,7 @@ public class SecurityConfig
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/profile/**").hasRole("ADMIN")
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/images/**").hasRole("ADMIN")
-
+                        .requestMatchers("/admin/upload").authenticated()
                         .anyRequest().authenticated()
                 )
 

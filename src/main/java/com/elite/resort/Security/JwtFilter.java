@@ -20,7 +20,10 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getRequestURI().contains("/upload");
+    }
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
