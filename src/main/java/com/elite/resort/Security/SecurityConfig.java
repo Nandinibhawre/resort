@@ -43,14 +43,13 @@ public class SecurityConfig
                                 "/api/rooms/**",
                                 "/api/contact/**",
                                 "/api/profile/**",
-                                "/api/images/**",
                                 "/api/payments/**"
                         ).permitAll()
                                 .requestMatchers("/api/admin/rooms/**").authenticated()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/profile/**").hasRole("ADMIN")
-
-//                        .requestMatchers("/api/images/**").hasRole("ADMIN")
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/images/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )

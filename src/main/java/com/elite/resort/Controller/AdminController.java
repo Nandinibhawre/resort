@@ -19,14 +19,14 @@ public class AdminController
     private final AdminService adminService;
 
     // ✅ View users (only name + email)
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
     public List<UserResponse> getUsers(){
         return adminService.getAllUsers();
     }
 
     // ✅ Delete user
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{userId}")
     public String deleteUser(@PathVariable String userId){
         return adminService.deleteUser(userId);
