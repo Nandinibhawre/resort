@@ -2,6 +2,7 @@ package com.elite.resort.Controller;
 
 import com.elite.resort.DTO.AdminBookingView;
 import com.elite.resort.Model.Room;
+
 import com.elite.resort.Services.AdminRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,6 @@ import java.util.List;
 public class AdminRoomController {
 
     private final AdminRoomService adminRoomService;
-
 
     @PostMapping
     public Room addRoom(@RequestBody Room room) {
@@ -35,7 +35,6 @@ public class AdminRoomController {
     }
 
     // optional admin endpoints
-
     @GetMapping
     public Object getAllRooms() {
         return adminRoomService.getAllRooms();
