@@ -11,11 +11,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/contact")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class ContactController {
 
     private final ContactRepo contactRepository;
-
 
     private final ContactService contactService;
 

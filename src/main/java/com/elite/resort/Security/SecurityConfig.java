@@ -68,7 +68,7 @@ public class SecurityConfig {
                 ));
 
                 config.setAllowedMethods(List.of(
-                                "GET", "POST", "PUT", "DELETE"));
+                                "GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
                 config.setAllowedHeaders(List.of("*"));
 
