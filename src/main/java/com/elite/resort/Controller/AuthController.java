@@ -19,8 +19,7 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
-public class AuthController
-{
+public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
@@ -29,15 +28,12 @@ public class AuthController
     }
 
     @PostMapping("/user/login")
-    public LoginResponse
-    login(@RequestBody LoginRequest request)
-    {
+    public LoginResponse login(@RequestBody LoginRequest request) {
         return authService.userLogin(request);
     }
 
     @PostMapping("/admin/login")
-    public String adminLogin(@RequestBody LoginRequest request)
-    {
+    public String adminLogin(@RequestBody LoginRequest request) {
         return authService.adminLogin(request);
     }
 }
