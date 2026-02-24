@@ -43,14 +43,14 @@ public class SecurityConfig
                                 "/api/rooms/**",
                                 "/api/contact/**",
                                 "/api/profile/**",
-                                "/api/payments/**"
+                                "/api/payments/**",
+                                "/api/images/**"
                         ).permitAll()
                                 .requestMatchers("/api/admin/rooms/**").authenticated()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/profile/**").hasRole("ADMIN")
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/images/**").authenticated()
-                        .anyRequest().authenticated()
+
                 )
 
                 .addFilterBefore(
