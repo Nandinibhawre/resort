@@ -68,7 +68,6 @@ public class SecurityConfig
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                "https://elite-resort-website.vercel.app/service",
                 "https://elite-resort-website.vercel.app/",
                 "https://admin-elite-resort.vercel.app/",
                 "http://localhost:5173"      // Vite
