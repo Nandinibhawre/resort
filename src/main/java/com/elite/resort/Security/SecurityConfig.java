@@ -72,7 +72,7 @@ public class SecurityConfig {
 
                 config.setAllowedHeaders(List.of("*"));
 
-                config.setAllowCredentials(false);
+                config.setAllowCredentials(true);
 
                 config.setExposedHeaders(List.of("Authorization"));
 
