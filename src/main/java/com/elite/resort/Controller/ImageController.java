@@ -1,34 +1,49 @@
 package com.elite.resort.Controller;
 
+
+import com.elite.resort.Model.Image;
+import com.elite.resort.Repository.ImageRepo;
 import com.elite.resort.Services.S3Service;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@RestController
-@RequestMapping("/api/images")
-@CrossOrigin(origins = "*")
-public class ImageController {
+    @RestController
+    @RequestMapping("/api/images")
+    @RequiredArgsConstructor
+    public class ImageController {
 
-    @Autowired
-    private S3Service s3Service;
+        private final S3Service s3Service;
+        private final ImageRepo imageRepo;
 
-    public ImageController(S3Service s3Service)
-    {
-        this.s3Service = s3Service;
-    }
+        // 🔥 Upload image with roomNumber
+        @PostMapping("/upload")
+        public ResponseEntity<?> uploadImage(
+                @RequestParam("file") MultipartFile file,
+                @RequestParam("roomNumber") String roomNumber) {
 
+            try {
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
-        try {
-            String imageUrl = s3Service.uploadFile(file);
-            return ResponseEntity.ok(imageUrl);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body("Upload failed: " + e.getMessage());
+                // 1️⃣ Upload to S3
+                String imageUrl = s3Service.uploadFile(file);
+
+                // 2️⃣ Save in MongoDB
+                Image image = new Image(
+                        file.getOriginalFilename(),
+                        imageUrl,
+                        roomNumber
+                );
+
+                imageRepo.save(image);
+
+                return ResponseEntity.ok(image);
+
+            } catch (Exception e) {
+
+                return ResponseEntity.internalServerError()
+                        .body("Upload failed: " + e.getMessage());
+            }
         }
     }
-}

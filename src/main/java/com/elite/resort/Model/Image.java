@@ -13,9 +13,10 @@ public class Image {
     private String fileName;
     private String imageUrl;
     private String roomNumber;   // 🔥 ADD THIS
-    public Image(String fileName,String imageUrl)
-    {
-        this.fileName=fileName;
-        this.imageUrl=imageUrl;
+
+    public Image(String fileName, String imageUrl, String roomNumber) {
+        this.fileName = fileName;
+        this.imageUrl = imageUrl;
+        this.roomNumber = roomNumber;
     }
 }
