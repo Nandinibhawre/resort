@@ -1,8 +1,5 @@
 package com.elite.resort.Services;
 
-import com.elite.resort.Model.Image;
-import com.elite.resort.Repository.ImageRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,27 +11,23 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Service
+
 public class S3Service {
 
-    @Autowired
-    private S3Client s3Client;
-    @Autowired
-    private ImageRepo imageRepository;
+    private final S3Client s3Client;
 
     @Value("${aws.bucket-name}")
     private String bucketName;
 
-    public S3Service(S3Client s3Client, ImageRepo imageRepository) {
+    public S3Service(S3Client s3Client) {
         this.s3Client = s3Client;
-        this.imageRepository = imageRepository;
     }
 
     public String uploadFile(MultipartFile file) throws IOException {
 
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        String key = "Resort/RoomImages/" + fileName;
 
-        // 👉 create key with folder
-        String key = "Resort/RoomImages";
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
@@ -45,12 +38,6 @@ public class S3Service {
                 putObjectRequest,
                 RequestBody.fromBytes(file.getBytes()));
 
-        String imageUrl = "https://" + bucketName + ".s3.amazonaws.com/" + key;
-
-        // 👉 save to MongoDB
-        Image image = new Image(fileName, imageUrl);
-        imageRepository.save(image);
-
-        return imageUrl;
+        return "https://" + bucketName + ".s3.amazonaws.com/" + key;
     }
 }

@@ -21,7 +21,8 @@ public class Room {
     private double pricePerNight;
     private int capacity;
     private boolean available;
-
+    // 👇 ADD THIS
+    private String imageUrl;
     @CreatedDate
     private LocalDateTime createdAt;
 
