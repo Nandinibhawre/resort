@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 
 @Document(collection = "rooms")
 @Data
-
 public class Room {
 
     @Id
@@ -21,8 +20,9 @@ public class Room {
     private double pricePerNight;
     private int capacity;
     private boolean available;
-    // 👇 ADD THIS
-    private String imageUrl;
+
+    // 👇 Store only imageId
+    private String imageId;
     @CreatedDate
     private LocalDateTime createdAt;
 

@@ -41,17 +41,18 @@ public class SecurityConfig {
                                                                 "/api/profile/**",
                                                                 "/api/payments/**",
                                                                 "/api/images/**",
-                                                                "/bookings/**")
+                                                        "/bookings/**")
+
                                                 .permitAll()
                                                 .requestMatchers("/api/admin/rooms/**").authenticated()
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                                .requestMatchers("/api/profile/**").hasRole("ADMIN")
+                                                .       requestMatchers("/api/profile/**").hasRole("ADMIN")
                                                 .requestMatchers("/admin/**").hasRole("ADMIN")
 
                                 )
 
                                 .addFilterBefore(
-                                                jwtFilter,
+                                                jwtFil  ter,
                                                 UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
