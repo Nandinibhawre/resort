@@ -40,7 +40,8 @@ public class SecurityConfig {
                                                                 "/api/contact/**",
                                                                 "/api/profile/**",
                                                                 "/api/payments/**",
-                                                                "/api/images/**")
+                                                                "/api/images/**",
+                                                                "/bookings/**")
                                                 .permitAll()
                                                 .requestMatchers("/api/admin/rooms/**").authenticated()
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
