@@ -110,7 +110,12 @@ public class AdminRoomService {
         } else {
             dto.setImageUrl(null);
         }
+        System.out.println("Room from Room table: " + room.getRoomNumber());
 
+        List<Image> allImages = imageRepo.findAll();
+        allImages.forEach(img ->
+                System.out.println("Image roomNumber: " + img.getRoomNumber())
+        );
         return dto;
     }
 }
