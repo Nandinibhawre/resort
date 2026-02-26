@@ -55,7 +55,7 @@ public class SecurityConfig {
 
                 return http.build();
         }
-
+        
         // ✅ CORS CONFIGURATION
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
@@ -65,7 +65,9 @@ public class SecurityConfig {
                 config.setAllowedOrigins(List.of(
                                 "https://elite-resort-website.vercel.app",
                                 "https://admin-elite-resort.vercel.app",
-                                "http://localhost:5173" // Vite
+                                "http://localhost:5173",
+                                "http://localhost:5174"
+
                 ));
 
                 config.setAllowedMethods(List.of(
