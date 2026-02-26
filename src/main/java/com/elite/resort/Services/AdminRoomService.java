@@ -1,6 +1,5 @@
 package com.elite.resort.Services;
 
-import com.elite.resort.DTO.AdminBookingView;
 import com.elite.resort.DTO.RoomResponseDTO;
 import com.elite.resort.Model.*;
 import com.elite.resort.Repository.*;
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdminRoomService {
@@ -20,15 +20,14 @@ public class AdminRoomService {
     private final PaymentRepo paymentRepo;
     private final ImageRepo imageRepo;
 
-    // ✅ ADD ROOM
-    public RoomResponseDTO addRoom(Room room) {
+    // ✅ ADD ROOM (No imageUrl manually)
+    public Room addRoom(Room room) {
         room.setAvailable(true);
-        Room savedRoom = roomRepository.save(room);
-        return convertToDTO(savedRoom);
+        return roomRepository.save(room);
     }
 
     // ✅ UPDATE ROOM
-    public RoomResponseDTO updateRoom(String id, Room updatedRoom) {
+    public Room updateRoom(String id, Room updatedRoom) {
 
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Room not found"));
@@ -39,9 +38,7 @@ public class AdminRoomService {
         room.setRoomNumber(updatedRoom.getRoomNumber());
         room.setAvailable(updatedRoom.isAvailable());
 
-        Room savedRoom = roomRepository.save(room);
-
-        return convertToDTO(savedRoom);
+        return roomRepository.save(room);
     }
 
     // ✅ DELETE ROOM
@@ -55,20 +52,22 @@ public class AdminRoomService {
         return "Room deleted successfully";
     }
 
-    // ✅ GET ALL ROOMS
+    // ✅ GET ALL ROOMS (with image auto fetched)
     public List<RoomResponseDTO> getAllRooms() {
 
         List<Room> rooms = roomRepository.findAll();
-        List<RoomResponseDTO> response = new ArrayList<>();
+        List<RoomResponseDTO> responseList = new ArrayList<>();
 
         for (Room room : rooms) {
-            response.add(convertToDTO(room));
+
+            RoomResponseDTO dto = convertToDTO(room);
+            responseList.add(dto);
         }
 
-        return response;
+        return responseList;
     }
 
-    // ✅ GET ROOM BY ID
+    // ✅ GET ROOM BY ID (with image auto fetched)
     public RoomResponseDTO getRoom(String id) {
 
         Room room = roomRepository.findById(id)
@@ -78,17 +77,17 @@ public class AdminRoomService {
     }
 
     // ✅ SET AVAILABILITY
-    public RoomResponseDTO setAvailability(String id, boolean status) {
+    public Room setAvailability(String id, boolean status) {
 
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Room not found"));
 
         room.setAvailable(status);
 
-        Room updatedRoom = roomRepository.save(room);
-
-        return convertToDTO(updatedRoom);
+        return roomRepository.save(room);
     }
+
+    // 🔥 IMPORTANT: AUTO IMAGE FETCH USING ROOM NUMBER
     private RoomResponseDTO convertToDTO(Room room) {
 
         RoomResponseDTO dto = new RoomResponseDTO();
@@ -99,16 +98,19 @@ public class AdminRoomService {
         dto.setPricePerNight(room.getPricePerNight());
         dto.setCapacity(room.getCapacity());
         dto.setAvailable(room.isAvailable());
+        dto.setCreatedAt(room.getCreatedAt());
+        dto.setUpdatedAt(room.getUpdatedAt());
 
-        // 🔥 Fetch image using roomNumber
-        Image image = imageRepo.findByRoomNumber(room.getRoomNumber());
+        // 🔥 Fetch image automatically using roomNumber
+        Image image = imageRepo.findByRoomNumber(room.getRoomNumber())
+                .orElse(null);
 
         if (image != null) {
             dto.setImageUrl(image.getImageUrl());
+        } else {
+            dto.setImageUrl(null);
         }
 
         return dto;
     }
-
-    // 🔵 YOUR BOOKING METHOD REMAINS SAME (no change)
 }

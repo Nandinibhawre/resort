@@ -1,69 +1,56 @@
 package com.elite.resort.Controller;
 
-import com.elite.resort.DTO.AdminBookingView;
+import com.elite.resort.DTO.RoomResponseDTO;
 import com.elite.resort.Model.Room;
-
-import com.elite.resort.Repository.RoomRepo;
 import com.elite.resort.Services.AdminRoomService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/rooms")
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class AdminRoomController {
 
     private final AdminRoomService adminRoomService;
 
-    //Adding rooms
+    // ✅ ADD ROOM (No imageUrl needed)
     @PostMapping
     public Room addRoom(@RequestBody Room room) {
         return adminRoomService.addRoom(room);
     }
 
-    //adding rooms
+    // ✅ UPDATE ROOM
     @PutMapping("/{id}")
     public Room updateRoom(@PathVariable String id,
                            @RequestBody Room room) {
         return adminRoomService.updateRoom(id, room);
     }
 
-    //deleting rooms
+    // ✅ DELETE ROOM
     @DeleteMapping("/{id}")
     public String deleteRoom(@PathVariable String id) {
         return adminRoomService.deleteRoom(id);
     }
 
-    // get all rooms
-    @GetMapping("/getallRooms")
-    public Object getAllRooms() {
+    // ✅ GET ALL ROOMS (Image auto fetched)
+    @GetMapping
+    public List<RoomResponseDTO> getAllRooms() {
         return adminRoomService.getAllRooms();
     }
 
-    //get rooms by id
+    // ✅ GET ROOM BY ID (Image auto fetched)
     @GetMapping("/{id}")
-    public Room getRoom(@PathVariable String id) {
+    public RoomResponseDTO getRoom(@PathVariable String id) {
         return adminRoomService.getRoom(id);
     }
 
-    //see booking details
-    // 🔐 Only ADMIN can access
-    @GetMapping("/bookings")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<AdminBookingView>> getAllBookings() {
-        return ResponseEntity.ok(adminRoomService.getAllBookingsForAdmin());
-    }
-
-    //change the avilibity od the rooms
-    @PatchMapping("/{roomId}/availability/{status}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public Room setAvailability(@PathVariable String roomId,
-                                @PathVariable boolean status) {
-        return adminRoomService.setAvailability(roomId, status);
+    // ✅ SET ROOM AVAILABILITY
+    @PatchMapping("/{id}/availability")
+    public Room setAvailability(@PathVariable String id,
+                                @RequestParam boolean status) {
+        return adminRoomService.setAvailability(id, status);
     }
 }
+
