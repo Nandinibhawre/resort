@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface ImageRepo extends MongoRepository<Image, String>
 {
     Optional<Image> findByRoomNumber(String roomNumber);
+    Optional<Image> findByUserId(String userId);
 }

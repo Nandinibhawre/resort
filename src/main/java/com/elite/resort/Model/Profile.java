@@ -17,7 +17,6 @@ public class Profile {
     private String userId;   // from token
     private String name;     // from token
     private String email;    // from token
-
     private String phone;
     private String address;
     private String idProof;

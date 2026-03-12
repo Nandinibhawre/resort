@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.elite.resort.DTO.ProfileRequest;
 import com.elite.resort.Model.Profile;
+import com.elite.resort.Model.User;
 import com.elite.resort.Repository.ProfileRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,5 +68,15 @@ public class ProfileService {
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
 
         profileRepository.delete(profile);
+    }
+
+    public void updateProfileImage(String userId, String imageUrl) {
+
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPhotoUrl(imageUrl);
+
+        userRepo.save(user);
     }
 }
