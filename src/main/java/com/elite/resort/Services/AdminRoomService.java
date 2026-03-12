@@ -14,11 +14,11 @@ import java.util.List;
 public class AdminRoomService {
 
     private final RoomRepo roomRepository;
-    private final BookingRepo bookingRepo;
-    private final UserRepo userRepo;
-    private final ProfileRepo profileRepo;
-    private final PaymentRepo paymentRepo;
-    private final ImageRepo imageRepo;
+//    private final BookingRepo bookingRepo;
+//    private final UserRepo userRepo;
+//    private final ProfileRepo profileRepo;
+//    private final PaymentRepo paymentRepo;
+//    private final ImageRepo imageRepo;
 
     // ✅ ADD ROOM (No imageUrl manually)
     public Room addRoom(Room room) {
