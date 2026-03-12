@@ -70,13 +70,13 @@ public class ProfileService {
         profileRepository.delete(profile);
     }
 
-    public void updateProfileImage(String userId, String imageUrl) {
-
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setPhotoUrl(imageUrl);
-
-        userRepo.save(user);
-    }
+//    public void updateProfileImage(String userId, String imageUrl) {
+//
+//        User user = userRepo.findById(userId)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        user.setPhotoUrl(imageUrl);
+//
+//        userRepo.save(user);
+//    }
 }

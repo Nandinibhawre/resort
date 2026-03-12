@@ -101,21 +101,21 @@ public class AdminRoomService {
         dto.setCreatedAt(room.getCreatedAt());
         dto.setUpdatedAt(room.getUpdatedAt());
 
-        // 🔥 Fetch image automatically using roomNumber
-        Image image = imageRepo.findByRoomNumber(room.getRoomNumber())
-                .orElse(null);
-
-        if (image != null) {
-            dto.setImageUrl(image.getImageUrl());
-        } else {
-            dto.setImageUrl(null);
-        }
-        System.out.println("Room from Room table: " + room.getRoomNumber());
-
-        List<Image> allImages = imageRepo.findAll();
-        allImages.forEach(img ->
-                System.out.println("Image roomNumber: " + img.getRoomNumber())
-        );
+//        // 🔥 Fetch image automatically using roomNumber
+//        Image image = imageRepo.findByRoomNumber(room.getRoomNumber())
+//                .orElse(null);
+//
+//        if (image != null) {
+//            dto.setImageUrl(image.getImageUrl());
+//        } else {
+//            dto.setImageUrl(null);
+//        }
+//        System.out.println("Room from Room table: " + room.getRoomNumber());
+//
+//        List<Image> allImages = imageRepo.findAll();
+//        allImages.forEach(img ->
+//                System.out.println("Image roomNumber: " + img.getRoomNumber())
+//        );
         return dto;
     }
 }
