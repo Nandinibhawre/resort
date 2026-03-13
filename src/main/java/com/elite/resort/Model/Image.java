@@ -14,6 +14,7 @@ public class Image {
     private String imageId;
     private String fileName;
     private String imageUrl;
+
     private String userId;
 
     public Image(String fileName, String imageUrl) {

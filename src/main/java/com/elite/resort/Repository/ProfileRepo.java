@@ -14,4 +14,5 @@ public interface ProfileRepo extends MongoRepository<Profile, String> {
     List<Profile> findByNameContainingIgnoreCase(String name);
 
     Optional<Profile> findByEmail(String email);
+
 }

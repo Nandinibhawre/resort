@@ -12,9 +12,15 @@ import lombok.Setter;
 public class ProfileResponseDTO
 {
 
+    private String profileId;
+
+    private String userId;
+    private String name;
+    private String email;
+
     private String phone;
     private String address;
-    private String idProof;
 
+    private String idProof;
     private String imageUrl;
 }

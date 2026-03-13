@@ -1,5 +1,7 @@
 package com.elite.resort.Services;
 
+import com.elite.resort.Model.Image;
+import com.elite.resort.Repository.ImageRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,25 +18,42 @@ import java.util.UUID;
 public class S3Service {
 
     private final S3Client s3Client;
+    private final ImageRepo imageRepo;
 
     @Value("${aws.bucket-name}")
     private String bucketName;
 
-    public String uploadFile(MultipartFile file) throws IOException {
+    public Image uploadFile(MultipartFile file, String folderName) {
 
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        String key = "Resort/RoomImages/" + fileName;
+        try {
 
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(key)
-                .contentType(file.getContentType())
-                .build();
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
-        s3Client.putObject(
-                putObjectRequest,
-                RequestBody.fromBytes(file.getBytes()));
+            String key = "Resort/" + folderName + "/" + fileName;
 
-        return "https://" + bucketName + ".s3.amazonaws.com/" + key;
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .contentType(file.getContentType())
+                    .build();
+
+            s3Client.putObject(
+                    putObjectRequest,
+                    RequestBody.fromBytes(file.getBytes())
+            );
+
+            String imageUrl = "https://" + bucketName + ".s3.amazonaws.com/" + key;
+
+            Image image = new Image();
+            image.setFileName(fileName);
+            image.setImageUrl(imageUrl);
+
+            return imageRepo.save(image);   // saved image with id
+
+        } catch (Exception e) {
+
+            throw new RuntimeException("Failed to upload file to S3", e);
+
+        }
     }
 }

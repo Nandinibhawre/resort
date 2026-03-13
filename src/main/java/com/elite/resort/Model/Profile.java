@@ -20,6 +20,6 @@ public class Profile {
     private String phone;
     private String address;
     private String idProof;
-    private String photoUrl;
+    private String imageUrl;
 
 }
