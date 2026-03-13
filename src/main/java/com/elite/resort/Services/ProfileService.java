@@ -89,8 +89,9 @@ public class ProfileService {
         dto.setEmail(profile.getEmail());
 
         dto.setPhone(profile.getPhone());
-        dto.setAddress(profile.getAddress());
 
+        dto.setAddress(profile.getAddress());
+        dto.setIdProof(profile.getIdProof());
         dto.setImageUrl(profile.getImageUrl());
 
         return dto;
