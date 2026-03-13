@@ -1,6 +1,6 @@
 # Elite Resort - User API Documentation
 
-> **For Frontend Developers** - Complete reference for User/Customer-facing APIs including authentication, room browsing, booking management, payments, and profile management.
+> Simple API reference for User/Customer-facing endpoints.
 
 ---
 
@@ -515,8 +515,8 @@ PUT https://resort-production-6aed.up.railway.app/api/payments/65d4e5f6g7h8i9j0k
 
 **Authentication Required:** Bearer Token
 
-### 5.1 Create or Update Profile
-Create or update your profile information.
+### 5.1 Create or Update Profile (with ID Proof Upload)
+Create or update your profile information with optional ID proof image upload.
 
 ```http
 POST https://resort-production-6aed.up.railway.app/api/profile
@@ -525,16 +525,45 @@ POST https://resort-production-6aed.up.railway.app/api/profile
 **Headers:**
 ```
 Authorization: Bearer <USER_JWT_TOKEN>
-Content-Type: application/json
+Content-Type: multipart/form-data
 ```
 
-**Request Body:**
+**Request Body (Form Data):**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `data` | JSON String | Yes | Profile data as JSON string |
+| `idProofImage` | File | No | ID proof image file (JPG, PNG, WEBP) |
+
+**Example using FormData (JavaScript):**
+```javascript
+const formData = new FormData();
+
+// Profile data as JSON string
+const profileData = {
+  phone: "+91-9876543210",
+  address: "123 Main Street, City, Country",
+  idProof: "PASSPORT-AB123456"
+};
+
+formData.append('data', JSON.stringify(profileData));
+formData.append('idProofImage', idProofFile); // File input
+
+const response = await fetch('https://resort-production-6aed.up.railway.app/api/profile', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${userToken}`
+  },
+  body: formData
+});
+```
+
+**Profile Data Structure (inside `data` field):**
 ```json
 {
   "phone": "+91-9876543210",
   "address": "123 Main Street, City, Country",
-  "idProof": "PASSPORT-AB123456",
-  "photoUrl": "https://s3.amazonaws.com/bucket/photo.jpg"
+  "idProof": "PASSPORT-AB123456"
 }
 ```
 
@@ -543,36 +572,46 @@ Content-Type: application/json
 | `phone` | string | No | Contact phone number |
 | `address` | string | No | Full address |
 | `idProof` | string | No | Government ID proof number |
-| `photoUrl` | string | No | Profile photo URL |
 
 **Response (200 OK):**
 ```json
 {
-  "id": "65e5f6g7h8i9j0k1l2m3n4o5",
+  "profileId": "65e5f6g7h8i9j0k1l2m3n4o5",
   "userId": "65b2c3d4e5f6g7h8i9j0k1l2",
   "name": "John Doe",
   "email": "john@example.com",
   "phone": "+91-9876543210",
   "address": "123 Main Street, City, Country",
   "idProof": "PASSPORT-AB123456",
-  "photoUrl": "https://s3.amazonaws.com/bucket/photo.jpg"
+  "imageUrl": "https://s3.amazonaws.com/bucket/idproofs/PASSPORT-AB123456.jpg"
 }
 ```
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `id` | string | Profile unique identifier |
+| `profileId` | string | Profile unique identifier |
 | `userId` | string | Associated user ID |
 | `name` | string | User's name (auto-filled from token) |
 | `email` | string | User's email (auto-filled from token) |
 | `phone` | string | Contact phone |
 | `address` | string | Full address |
 | `idProof` | string | ID proof number |
-| `photoUrl` | string | Profile photo URL |
+| `imageUrl` | string | Uploaded ID proof image URL (null if not uploaded) |
 
 **Notes:**
 - Name and email are automatically populated from JWT token
 - This endpoint creates a new profile or updates existing one
+- The `idProofImage` file is optional - you can create/update profile without uploading an image
+- If uploaded, the image is stored in S3 and the URL is returned in `imageUrl`
+- Supported image formats: JPG, PNG, WEBP
+
+**Error Responses:**
+
+| Status | Message | Scenario |
+|--------|---------|----------|
+| 400 | Bad Request | Invalid JSON data or file format |
+| 401 | Unauthorized | Missing or invalid token |
+| 500 | Internal Server Error | File upload failed |
 
 ---
 
@@ -610,7 +649,6 @@ Authorization: Bearer <USER_JWT_TOKEN>
 | 404 | Not Found | Profile not found |
 | 500 | Internal Server Error | Server error |
 
----
 
 ## 6. Invoice APIs
 
@@ -709,4 +747,8 @@ POST https://resort-production-6aed.up.railway.app/api/contact
 |--------|---------|----------|
 | 400 | Bad Request | Missing required fields |
 | 500 | Internal Server Error | Server error |
+
+---
+
+**Production URL:** https://resort-production-6aed.up.railway.app
 
