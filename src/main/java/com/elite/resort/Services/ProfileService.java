@@ -44,7 +44,7 @@ public class ProfileService {
 
         profile.setPhone(request.getPhone());
         profile.setAddress(request.getAddress());
-
+        profile.setIdProof(request.getIdProof());
         if (idProofImage != null && !idProofImage.isEmpty()) {
 
             Image image = s3Service.uploadFile(idProofImage, "idProofs");
