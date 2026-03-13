@@ -4,7 +4,10 @@ import com.elite.resort.DTO.RoomResponseDTO;
 import com.elite.resort.Model.Room;
 import com.elite.resort.Services.AdminRoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -15,17 +18,38 @@ public class AdminRoomController {
 
     private final AdminRoomService adminRoomService;
 
-    // ✅ ADD ROOM (No imageUrl needed)
-    @PostMapping
-    public Room addRoom(@RequestBody Room room) {
-        return adminRoomService.addRoom(room);
+    // ✅ ADD ROOM WITH IMAGE
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<RoomResponseDTO> addRoom(
+
+            @RequestPart("data") String data,
+            @RequestPart(value = "roomImage", required = false) MultipartFile roomImage
+
+    ) throws Exception {
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        Room room = mapper.readValue(data, Room.class);
+
+        return ResponseEntity.ok(adminRoomService.addRoom(room, roomImage));
     }
 
+
     // ✅ UPDATE ROOM
-    @PutMapping("/{id}")
-    public Room updateRoom(@PathVariable String id,
-                           @RequestBody Room room) {
-        return adminRoomService.updateRoom(id, room);
+    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
+    public ResponseEntity<RoomResponseDTO> updateRoom(
+
+            @PathVariable String id,
+            @RequestPart("data") String data,
+            @RequestPart(value = "roomImage", required = false) MultipartFile roomImage
+
+    ) throws Exception {
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        Room room = mapper.readValue(data, Room.class);
+
+        return ResponseEntity.ok(adminRoomService.updateRoom(id, room, roomImage));
     }
 
     // ✅ DELETE ROOM

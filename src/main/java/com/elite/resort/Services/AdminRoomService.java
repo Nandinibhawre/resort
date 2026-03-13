@@ -5,6 +5,7 @@ import com.elite.resort.Model.*;
 import com.elite.resort.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,20 +15,27 @@ import java.util.List;
 public class AdminRoomService {
 
     private final RoomRepo roomRepository;
-//    private final BookingRepo bookingRepo;
-//    private final UserRepo userRepo;
-//    private final ProfileRepo profileRepo;
-//    private final PaymentRepo paymentRepo;
-//    private final ImageRepo imageRepo;
+    private  final S3Service s3Service;
 
-    // ✅ ADD ROOM (No imageUrl manually)
-    public Room addRoom(Room room) {
+    // ✅ ADD ROOM WITH IMAGE
+    public RoomResponseDTO addRoom(Room room, MultipartFile roomImage) {
+
+        if (roomImage != null && !roomImage.isEmpty()) {
+
+            Image image = s3Service.uploadFile(roomImage, "roomImages");
+
+            room.setImageUrl(image.getImageUrl());
+        }
+
         room.setAvailable(true);
-        return roomRepository.save(room);
+
+        Room saved = roomRepository.save(room);
+
+        return convertToDTO(saved);
     }
 
     // ✅ UPDATE ROOM
-    public Room updateRoom(String id, Room updatedRoom) {
+    public RoomResponseDTO updateRoom(String id, Room updatedRoom, MultipartFile roomImage) {
 
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Room not found"));
@@ -38,9 +46,17 @@ public class AdminRoomService {
         room.setRoomNumber(updatedRoom.getRoomNumber());
         room.setAvailable(updatedRoom.isAvailable());
 
-        return roomRepository.save(room);
-    }
+        if (roomImage != null && !roomImage.isEmpty()) {
 
+            Image image = s3Service.uploadFile(roomImage, "roomImages");
+
+            room.setImageUrl(image.getImageUrl());
+        }
+
+        Room saved = roomRepository.save(room);
+
+        return convertToDTO(saved);
+    }
     // ✅ DELETE ROOM
     public String deleteRoom(String id) {
 

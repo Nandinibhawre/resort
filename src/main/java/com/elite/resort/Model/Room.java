@@ -21,8 +21,9 @@ public class Room {
     private int capacity;
     private boolean available;
 
-    // 👇 Store only imageId
-    private String imageId;
+    //👇Store only imageId
+    private String imageUrl;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
