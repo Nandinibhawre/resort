@@ -16,22 +16,33 @@ public class AdminRoomService {
 
     private final RoomRepo roomRepository;
     private  final S3Service s3Service;
+    private  final ImageRepo imageRepository;
 
-    // ✅ ADD ROOM WITH IMAGE
     public RoomResponseDTO addRoom(Room room, MultipartFile roomImage) {
 
+        room.setAvailable(true);
+
+        // 1️⃣ Save room first to generate roomId
+        Room savedRoom = roomRepository.save(room);
+
+        // 2️⃣ Upload image if present
         if (roomImage != null && !roomImage.isEmpty()) {
 
             Image image = s3Service.uploadFile(roomImage, "roomImages");
 
-            room.setImageUrl(image.getImageUrl());
+            // 3️⃣ Save image info
+            image.setRoomId(savedRoom.getRoomId());
+            image.setType("ROOM");
+
+            imageRepository.save(image);
+
+            // 4️⃣ Update room with imageUrl
+            savedRoom.setImageUrl(image.getImageUrl());
+
+            savedRoom = roomRepository.save(savedRoom);
         }
 
-        room.setAvailable(true);
-
-        Room saved = roomRepository.save(room);
-
-        return convertToDTO(saved);
+        return convertToDTO(savedRoom);
     }
 
     // ✅ UPDATE ROOM

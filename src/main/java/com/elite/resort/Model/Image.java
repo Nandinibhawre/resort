@@ -15,6 +15,10 @@ public class Image {
     private String fileName;
     private String imageUrl;
 
+    private String roomId;
+    private String profileId;
+
+    private String type; // ROOM / PROFILE / IDPROOF
     private String userId;
 
     public Image(String fileName, String imageUrl) {
