@@ -45,10 +45,13 @@ public class AdminRoomService {
         room.setCapacity(updatedRoom.getCapacity());
         room.setRoomNumber(updatedRoom.getRoomNumber());
         room.setAvailable(updatedRoom.isAvailable());
-
         if (roomImage != null && !roomImage.isEmpty()) {
 
+            System.out.println("Uploading room image...");
+
             Image image = s3Service.uploadFile(roomImage, "roomImages");
+
+            System.out.println("Image URL: " + image.getImageUrl());
 
             room.setImageUrl(image.getImageUrl());
         }
