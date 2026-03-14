@@ -81,7 +81,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.searchProfilesByName(name));
     }
 
-
+//cscscxzcz
     @DeleteMapping("/{profileid}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteProfile(@PathVariable String profileid) {
