@@ -18,17 +18,14 @@ public class AdminRoomController {
 
     private final AdminRoomService adminRoomService;
 
-    // ✅ ADD ROOM WITH IMAGE
-    @PostMapping(consumes = {"multipart/form-data"})
+    @PostMapping(value = "/add", consumes = {"multipart/form-data"})
     public ResponseEntity<RoomResponseDTO> addRoom(
 
             @RequestPart("data") String data,
             @RequestPart(value = "roomImage", required = false) MultipartFile roomImage
-
     ) throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
-
         Room room = mapper.readValue(data, Room.class);
 
         return ResponseEntity.ok(adminRoomService.addRoom(room, roomImage));
