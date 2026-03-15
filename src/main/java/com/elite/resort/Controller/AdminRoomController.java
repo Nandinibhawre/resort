@@ -28,7 +28,6 @@ public class AdminRoomController {
 
         ObjectMapper mapper = new ObjectMapper();
         Room room = mapper.readValue(data, Room.class);
-
         return ResponseEntity.ok(adminRoomService.addRoom(room, roomImage));
     }
 
@@ -43,9 +42,7 @@ public class AdminRoomController {
     ) throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
-
         Room room = mapper.readValue(data, Room.class);
-
         return ResponseEntity.ok(adminRoomService.updateRoom(id, room, roomImage));
     }
 
