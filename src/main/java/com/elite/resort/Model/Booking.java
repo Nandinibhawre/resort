@@ -37,5 +37,7 @@ public class Booking {
     private String status;
 
     private String paymentId;  // added
+
+    @CreatedDate
     private LocalDateTime paymentDoneAt;
 }

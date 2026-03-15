@@ -1,5 +1,6 @@
 package com.elite.resort.Services;
 
+import com.elite.resort.DTO.AdminBookingResponseDTO;
 import com.elite.resort.DTO.BookingRequest;
 import com.elite.resort.Exceptions.BadRequestException;
 import com.elite.resort.Exceptions.ResourceNotFoundException;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -116,11 +118,57 @@ public class BookingService {
     }
 
     // ================= GET ALL BOOKINGS =================
-    public List<Booking> getAllBookings() {
+    public List<AdminBookingResponseDTO> getAllBookingsForAdmin() {
 
-        return bookingRepository.findAll();
+        List<Booking> bookings = bookingRepository.findAll();
+        List<AdminBookingResponseDTO> responseList = new ArrayList<>();
+
+        for (Booking booking : bookings) {
+
+            AdminBookingResponseDTO dto = new AdminBookingResponseDTO();
+
+            dto.setBookingId(booking.getBookingId());
+            dto.setUserId(booking.getUserId());
+            dto.setRoomId(booking.getRoomId());
+
+            dto.setCheckIn(booking.getCheckIn());
+            dto.setCheckOut(booking.getCheckOut());
+            dto.setTotalAmount(booking.getTotalAmount());
+            dto.setStatus(booking.getStatus());
+            dto.setCreatedAt(booking.getCreatedAt());
+
+            dto.setPaymentId(booking.getPaymentId());
+
+            // 🔹 Fetch User Details
+            User user = userRepository.findById(booking.getUserId()).orElse(null);
+
+            if (user != null) {
+                dto.setUserName(user.getName());
+                dto.setUserEmail(user.getEmail());
+                           }
+
+            // 🔹 Fetch Room Details
+            Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
+
+            if (room != null) {
+                dto.setRoomNumber(room.getRoomNumber());
+                dto.setRoomType(room.getType());
+            }
+
+            // 🔹 Payment Info
+            dto.setPaymentStatus(
+                    booking.getPaymentId() != null ? "PAID" : "PENDING"
+            );
+
+            dto.setPaymentMethod(
+                    booking.getPaymentId() != null ? "ONLINE" : "NOT PAID"
+            );
+
+            responseList.add(dto);
+        }
+
+        return responseList;
     }
-
     // ================= GET BOOKING BY ID =================
     public Booking getBookingById(String id) {
 

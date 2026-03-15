@@ -1,5 +1,6 @@
 package com.elite.resort.Controller;
 
+import com.elite.resort.DTO.AdminBookingResponseDTO;
 import com.elite.resort.DTO.BookingRequest;
 import com.elite.resort.Model.Booking;
 import com.elite.resort.Security.JwtUtil;
@@ -47,11 +48,10 @@ public Booking bookRoom(
     }
 
     // ================= GET ALL BOOKINGS (ADMIN) =================
-    @GetMapping
-    public List<Booking> getAllBookings() {
-        return bookingService.getAllBookings();
+    @GetMapping("/admin/all-bookings")
+    public List<AdminBookingResponseDTO> getAllBookingsForAdmin() {
+        return bookingService.getAllBookingsForAdmin();
     }
-
     // ================= GET BOOKING BY ID =================
     @GetMapping("/{id}")
     public Booking getBooking(@PathVariable String id) {
