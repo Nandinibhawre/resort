@@ -109,4 +109,22 @@ public class BookingService {
             roomRepository.save(room);
         }
     }
+    // ================= GET USER BOOKINGS =================
+    public List<Booking> getBookingsByUser(String userId) {
+
+        return bookingRepository.findByUserId(userId);
+    }
+
+    // ================= GET ALL BOOKINGS =================
+    public List<Booking> getAllBookings() {
+
+        return bookingRepository.findAll();
+    }
+
+    // ================= GET BOOKING BY ID =================
+    public Booking getBookingById(String id) {
+
+        return bookingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+    }
 }

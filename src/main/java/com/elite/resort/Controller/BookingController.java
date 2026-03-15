@@ -7,6 +7,8 @@ import com.elite.resort.Services.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/bookings")
 @CrossOrigin(origins = "*")
@@ -33,6 +35,28 @@ public Booking bookRoom(
     return bookingService.createBooking(userId, roomId, request);
 }
 
+    // ================= GET USER BOOKINGS =================
+    @GetMapping("/my-bookings")
+    public List<Booking> getUserBookings(
+            @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.substring(7);
+        String userId = jwtUtil.extractUserId(token);
+
+        return bookingService.getBookingsByUser(userId);
+    }
+
+    // ================= GET ALL BOOKINGS (ADMIN) =================
+    @GetMapping
+    public List<Booking> getAllBookings() {
+        return bookingService.getAllBookings();
+    }
+
+    // ================= GET BOOKING BY ID =================
+    @GetMapping("/{id}")
+    public Booking getBooking(@PathVariable String id) {
+        return bookingService.getBookingById(id);
+    }
 
     // ================= CANCEL BOOKING =================
     @PutMapping("/{id}/cancel")
